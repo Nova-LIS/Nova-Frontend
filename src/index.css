@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+
+:root {
+    /* COLORS */
+    --color-primary: #e89a1a;
+    --color-primary-light: #ffb900;
+    --color-primary-dark: #ff7730;
+
+    --color-secondary: #eb2f64;
+    --color-secondary-light: #ff3366;
+    --color-secondary-dark: #ba265d;
+
+    --color-tertiary: #55c57a;
+    --color-tertiary-light: #7ed56f;
+    --color-tertiary-dark: #28b485;
+
+    --color-quaternary-light: #2998ff;
+    --color-quaternary-dark: #5643fa;
+
+    /* SHADOWS */
+    --shadow-dark: 0 2rem 6rem rgba(0, 0, 0, 0.3);
+    --shadow-light: 0 2rem 5rem rgba(0, 0, 0, 0.1);
+
+    /* DIMENSIONS */
+    --mob-max-width: 650px;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    outline-style: none;
+    -moz-outline-style: none;
+    -webkit-outline-style: none;
+}
+
+html {
+    font-size: 62.5%; /* .1rem = 1px */
+    font-family: "Monserrat";
+    font-weight: 700;
+}
