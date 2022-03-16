@@ -1,7 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Lato:100,300,400,700,900");
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+
 
 :root {
-    /* COLORS */
+    /* SHADES OF GREY */
+    --color-black: #000;
+    --color-white: #fff;
+
+
+    /* RAINBOW */
     --color-primary: #e89a1a;
     --color-primary-light: #ffb900;
     --color-primary-dark: #ff7730;
@@ -21,8 +28,17 @@
     --shadow-dark: 0 2rem 6rem rgba(0, 0, 0, 0.3);
     --shadow-light: 0 2rem 5rem rgba(0, 0, 0, 0.1);
 
+    /* DEFAULT FONT SIZE */
+    --default-font-size: 1.6rem;
+
     /* DIMENSIONS */
     --mob-max-width: 650px;
+}
+
+body {
+    font-weight: 400;
+    font-size: var(--default-font-size);
+    line-height: 1.7;
 }
 
 *,
@@ -41,6 +57,6 @@
 
 html {
     font-size: 62.5%; /* .1rem = 1px */
-    font-family: "Monserrat";
+    font-family: "Lato", sans-serif;
     font-weight: 700;
 }

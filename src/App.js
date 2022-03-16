@@ -1,9 +1,14 @@
+import Navbar from "./components/navbar/Navbar";
+import Home from "./pages/Home";
+import { Route, Switch } from "react-router-dom";
+
 const App = () => {
     return (
-        <div>
-            <h2>Ugh.. another goddamn project!</h2>
-        </div>
+        <>
+            <Navbar />
+            <Home />
+        </>
     );
-}
+};
 
 export default App;
