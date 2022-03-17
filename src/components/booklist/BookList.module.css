@@ -1,0 +1,26 @@
+.booklist {
+    filter: none;
+}
+
+.booklist__title {
+    color: var(--color-white);
+    text-align: center;
+}
+
+.booklist__list {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    gap: 10rem;
+    flex-wrap: wrap;
+    list-style: none;
+}
+
+.booklist__rule {
+    width: 80%;
+    height: .5rem;
+    margin: 1rem auto 2rem; 
+    background-color: var(--color-primary-dark);
+    border-radius: 10rem;
+}

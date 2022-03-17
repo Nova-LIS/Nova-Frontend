@@ -1,0 +1,8 @@
+.suggestion {
+    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url("./imgs/sgsstion.jpg");
+    padding: 4rem 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5rem;
+    margin: 10rem 0 10rem;
+}
