@@ -1,5 +1,6 @@
 .title {
     background: linear-gradient( rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) ), url("imgs/lib.jpg");
+    clip-path: polygon(0 0, 100% 0, 100% 85vh, 0 100%);
     /* background-image: url("imgs/lib.jpg"); */
     background-size: cover;
     background-position: center;

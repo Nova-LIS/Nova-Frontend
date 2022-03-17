@@ -1,5 +1,6 @@
 import Navbar from "./components/navbar/Navbar";
 import Home from "./pages/Home";
+import Footer from "./components/footer/Footer";
 import { Route, Switch } from "react-router-dom";
 
 const App = () => {
@@ -7,6 +8,7 @@ const App = () => {
         <>
             <Navbar />
             <Home />
+            <Footer />
         </>
     );
 };
