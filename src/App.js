@@ -1,13 +1,20 @@
 import Navbar from "./components/navbar/Navbar";
-import Home from "./pages/Home";
 import Footer from "./components/footer/Footer";
-import { Route, Switch } from "react-router-dom";
+import Home from "./pages/home/Home";
+import Login from "./pages/login/Login";
+import { Route, Switch, Redirect } from "react-router-dom";
 
 const App = () => {
     return (
         <>
             <Navbar />
-            <Home />
+            <Switch>
+                <Route path="/" exact>
+                    <Redirect to="/home" />
+                </Route>
+                <Route path="/home" component={Home} exact />
+                <Route path="/login" component={Login} exact />
+            </Switch>
             <Footer />
         </>
     );

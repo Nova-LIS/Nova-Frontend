@@ -1,0 +1,11 @@
+.login {
+    width: 100%;
+    padding: 15rem 10rem 30rem;
+    display: flex;
+    justify-content: center;
+    background-image: url("./imgs/login-bkg.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
