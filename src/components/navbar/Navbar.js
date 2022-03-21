@@ -1,4 +1,7 @@
 import { useState, useContext } from "react";
+import { NavLink } from "react-router-dom";
+
+import ScrollContext from "../../store/scroll-context";
 import classes from "./Navbar.module.css";
 
 import logo from "./react.png";
@@ -49,13 +52,9 @@ const Navbar = () => {
     //     </>
     // );
 
-    const [isSecondaryNavOpen, setIsSecondaryNavOpen] = useState(false);
+    const scrollCtx = useContext(ScrollContext);
 
-    const toggleSecondaryNavHandler = () => {
-        setIsSecondaryNavOpen(prev => !prev);
-    }
-
-    const menuToggleIcon = !isSecondaryNavOpen ? (
+    const menuToggleIcon = !scrollCtx.isSecondaryNavOpen ? (
         <svg viewBox="0 0 100 80" width="40" height="40" className={classes["hamburger"]}>
             <rect width="100" height="10" className={classes["hamburger__bar"]} />
             <rect y="25" width="100" height="10" className={classes["hamburger__bar"]} />
@@ -68,67 +67,80 @@ const Navbar = () => {
         </svg>
     );
 
-    const secondaryHeaderClasses = classes["secondary-header"] + (isSecondaryNavOpen ? " " + classes["active"] : "");
-
+    const secondaryHeaderClasses = classes["secondary-header"] + (scrollCtx.isSecondaryNavOpen ? " " + classes["active"] : "");
     return (
         <header className={classes["navbar"]}>
             <header className={classes["primary-header"]}>
                 <div className={classes["logo-container"]}>
                     <img src={logo} alt="Nova" className={classes["logo-img"]} />
                 </div>
-                <button className={classes["nav-toggle"]} onClick={toggleSecondaryNavHandler}>{menuToggleIcon}</button>
+                <button className={classes["nav-toggle"]} onClick={scrollCtx.onToggleSecondaryNav}>
+                    {menuToggleIcon}
+                </button>
                 <nav className={classes["primary-navigation"]}>
                     <ul className={classes["primary-navigation__list"]}>
                         <li>
-                            <a hreaf="/home" className={classes["primary-navigation__link"]}>
+                            <NavLink to="/home" className={classes["primary-navigation__link"]}>
                                 Home
-                            </a>
+                            </NavLink>
                         </li>
                         <li>
-                            <a href="/about" className={classes["primary-navigation__link"]}>
+                            <NavLink to="/browse" className={classes["primary-navigation__link"]}>
                                 Browse
-                            </a>
+                            </NavLink>
                         </li>
                         <li>
-                            <div className={classes["primary-navigation__link"]}>About Us</div>
+                            <NavLink to="/about" className={classes["primary-navigation__link"]}>
+                                About
+                            </NavLink>
                         </li>
                         <li>
-                            <div className={classes["primary-navigation__link"]}>Contact</div>
+                            <NavLink to="/contact" className={classes["primary-navigation__link"]}>
+                                Contact
+                            </NavLink>
                         </li>
                         <li>
-                            <div className={classes["primary-navigation__link"]}>FAQs</div>
+                            <NavLink to="/faqs" className={classes["primary-navigation__link"]}>
+                                FAQs
+                            </NavLink>
                         </li>
                     </ul>
                 </nav>
                 <div className={classes["nav-btn__group"]}>
-                    <a href="#" className={`${classes["nav-btn"]} ${classes["login"]}`}>
+                    <NavLink to="/login" className={`${classes["nav-btn"]} ${classes["login"]}`}>
                         Login
-                    </a>
-                    <a href="#" className={`${classes["nav-btn"]} ${classes["register"]}`}>
+                    </NavLink>
+                    <NavLink to="/register" className={`${classes["nav-btn"]} ${classes["register"]}`}>
                         Register
-                    </a>
+                    </NavLink>
                 </div>
             </header>
             <header className={secondaryHeaderClasses}>
                 <ul className={classes["secondary-navigation__list"]}>
                     <li>
-                        <a href="/login" className={classes["secondary-navigation__link"]}>
+                        <NavLink to="/home" className={classes["secondary-navigation__link"]}>
                             Home
-                        </a>
-                        <a href="/register" className={classes["secondary-navigation__link"]}>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/browse" className={classes["secondary-navigation__link"]}>
                             Browse
-                        </a>
-                        <a href="/home" className={classes["secondary-navigation__link"]}>
+                        </NavLink>
+                    </li>
+                    <li>
+                        <NavLink to="/about" className={classes["secondary-navigation__link"]}>
                             About
-                        </a>
+                        </NavLink>
                     </li>
                     <li>
-                        <a href="/about" className={classes["secondary-navigation__link"]}>
+                        <NavLink to="/contact" className={classes["secondary-navigation__link"]}>
                             Contact Us
-                        </a>
+                        </NavLink>
                     </li>
                     <li>
-                        <div className={classes["secondary-navigation__link"]}>FAQs</div>
+                        <NavLink to="/faqs" className={classes["secondary-navigation__link"]}>
+                            FAQs
+                        </NavLink>
                     </li>
                 </ul>
             </header>

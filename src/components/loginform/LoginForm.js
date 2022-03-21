@@ -11,7 +11,7 @@ const Login = () => {
         valueChangeHandler: userNameChangeHandler,
         inputBlurHandler: userNameInputBlurHandler,
         reset: resetUserName,
-    } = useInput(isNotEmpty, "Username");
+    } = useInput(isNotEmpty);
 
     const {
         value: password,
@@ -20,13 +20,13 @@ const Login = () => {
         valueChangeHandler: passwordChangeHandler,
         inputBlurHandler: passwordInputBlurHandler,
         reset: resetPassword,
-    } = useInput(isNotEmpty, "Password");
+    } = useInput(isNotEmpty);
 
     let formIsValid = false;
     if (userNameIsValid && passwordIsValid) formIsValid = true;
 
     const normalClasses = classes["input__field"];
-    const errorClasses = `${normalClasses} ${classes["input__error"]}`;
+    const errorClasses = classes["input__error"];
 
     const userNameInputClasses = userNameInputHasError ? errorClasses : normalClasses;
     const passwordInputClasses = passwordInputHasError ? errorClasses : normalClasses;
