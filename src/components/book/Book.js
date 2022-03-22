@@ -1,4 +1,3 @@
-import defaultProps from "react-slick/lib/default-props";
 import classes from "./Book.module.css";
 
 const Book = () => {

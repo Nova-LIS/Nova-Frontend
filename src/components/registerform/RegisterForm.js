@@ -1,6 +1,8 @@
 import classes from "./RegisterForm.module.css";
 import useInput from "../../hooks/use-input";
 
+import { useState, useRef } from "react";
+
 const isNotEmpty = (value) => value.trim() !== "";
 
 const isEmail = (value) => value.includes("@");
@@ -23,6 +25,10 @@ const RegisterForm = () => {
         inputBlurHandler: rollInputBlurHandler,
         reset: resetRoll,
     } = useInput(isNotEmpty);
+
+    const [designation, setDesignation] = useState("");
+
+    const designationIsValid = designation !== "";
 
     const {
         value: email,
@@ -78,8 +84,13 @@ const RegisterForm = () => {
         resetConfirmPassword();
     };
 
+    const designationChangeHandler = (event) => {
+        setDesignation(event.target.value);
+    };
+
     let formIsValid = false;
-    if (userNameIsValid && passwordIsValid) formIsValid = true;
+    // if (nameIsValid && rollIsValid && emailIsValid && phoneIsValid && userNameIsValid && passwordIsValid) formIsValid = true;
+    formIsValid = true;
 
     const normalClasses = classes["input__field"];
     const errorClasses = classes["input__error"];
@@ -95,6 +106,15 @@ const RegisterForm = () => {
     const submitHandler = (event) => {
         event.preventDefault();
 
+        const user = {
+            name,
+            roll,
+            email,
+            phone,
+            userName,
+            password
+        };
+
         resetName();
         resetRoll();
         resetEmail();
@@ -102,6 +122,8 @@ const RegisterForm = () => {
         resetUserName();
         resetPassword();
         resetConfirmPassword();
+
+        console.log(user);
     };
 
     return (
@@ -144,7 +166,8 @@ const RegisterForm = () => {
                     <label className={`${classes["input__label"]}`} htmlFor="roll">
                         Choose Designation
                     </label>
-                    <select id="cars" className={classes["select__field"]}>
+                    <select className={classes["select__field"]} value={designation} onChange={designationChangeHandler}>
+                        <option value="" disabled>Select your designation</option>
                         <option value="UG Student" className={classes["option"]}>UG Student</option>
                         <option value="PG Student" className={classes["option"]}>PG Student</option>
                         <option value="Research Scholar" className={classes["option"]}>Research Scholar</option>

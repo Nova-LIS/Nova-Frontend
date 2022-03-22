@@ -79,6 +79,10 @@
     cursor: pointer;
 }
 
+.form__btn:active {
+    transform: scale(.92);
+}
+
 .form__btn:hover {
     border: 2px solid var(--color-black);
     background-color: var(--color-black);
