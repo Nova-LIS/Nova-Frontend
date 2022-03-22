@@ -90,13 +90,18 @@ const RegisterForm = () => {
     const phoneInputClasses = phoneInputHasError ? errorClasses : normalClasses;
     const userNameInputClasses = userNameInputHasError ? errorClasses : normalClasses;
     const passwordInputClasses = passwordInputHasError ? errorClasses : normalClasses;
-    const confirmPassswordInputClasses = confirmPasswordInputHasError ? errorClasses : normalClasses;
+    const confirmPasswordInputClasses = confirmPasswordInputHasError ? errorClasses : normalClasses;
 
     const submitHandler = (event) => {
         event.preventDefault();
 
+        resetName();
+        resetRoll();
+        resetEmail();
+        resetPhone();
         resetUserName();
         resetPassword();
+        resetConfirmPassword();
     };
 
     return (
@@ -213,7 +218,7 @@ const RegisterForm = () => {
                         Confirm Password
                     </label>
                     <input
-                        className={passwordInputClasses}
+                        className={confirmPasswordInputClasses}
                         id="cofirm-password"
                         type="password"
                         value={confirmPassword}
