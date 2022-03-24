@@ -16,6 +16,7 @@ export const ScrollContextProvider = (props) => {
     }
 
     history.listen((location, action) => {
+        window.scroll(0, 0);
         setIsSecondaryNavOpen(false);
     });
 

@@ -87,3 +87,11 @@
     border: 2px solid var(--color-black);
     background-color: var(--color-black);
 }
+
+.registering {
+    width: 100%;
+    height: 10rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

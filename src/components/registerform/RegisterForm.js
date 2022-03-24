@@ -3,11 +3,18 @@ import useInput from "../../hooks/use-input";
 
 import { useState, useRef } from "react";
 
+import { Route, Switch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
+
+
 const isNotEmpty = (value) => value.trim() !== "";
 
 const isEmail = (value) => value.includes("@");
 
 const RegisterForm = () => {
+
+    const history = useHistory();
+
     const {
         value: name,
         isValid: nameIsValid,
@@ -26,9 +33,14 @@ const RegisterForm = () => {
         reset: resetRoll,
     } = useInput(isNotEmpty);
 
-    const [designation, setDesignation] = useState("");
-
-    const designationIsValid = designation !== "";
+    const {
+        value: designation,
+        isValid: designationIsValid,
+        hasError: designationInputHasError,
+        valueChangeHandler: designationChangeHandler,
+        inputBlurHandler: designationInputBlurHandler,
+        reset: resetDesignation
+    } = useInput(isNotEmpty);
 
     const {
         value: email,
@@ -84,39 +96,68 @@ const RegisterForm = () => {
         resetConfirmPassword();
     };
 
-    const designationChangeHandler = (event) => {
-        setDesignation(event.target.value);
-    };
+    // const designationChangeHandler = (event) => {
+    //     setDesignation(event.target.value);
+    // };
+
+    const [rollExists, setRollExists] = useState(false);
+    const [emailExists, setEmailExists] = useState(false);
+    const [phoneExists, setPhoneExists] = useState(false);
+    const [usernameExists, setUsernameExists] = useState(false);
 
     let formIsValid = false;
-    // if (nameIsValid && rollIsValid && emailIsValid && phoneIsValid && userNameIsValid && passwordIsValid) formIsValid = true;
-    formIsValid = true;
+    if (nameIsValid && rollIsValid && designationIsValid && emailIsValid && phoneIsValid && userNameIsValid && passwordIsValid) formIsValid = true;
 
     const normalClasses = classes["input__field"];
     const errorClasses = classes["input__error"];
 
+    // const [designationHasError, setDesignationHasError] = useState(true);
+    // const [designationTo]
+
     const nameInputClasses = nameInputHasError ? errorClasses : normalClasses;
-    const rollInputClasses = rollInputHasError ? errorClasses : normalClasses;
-    const emailInputClasses = emailInputHasError ? errorClasses : normalClasses;
-    const phoneInputClasses = phoneInputHasError ? errorClasses : normalClasses;
-    const userNameInputClasses = userNameInputHasError ? errorClasses : normalClasses;
+    const rollInputClasses = rollInputHasError || rollExists ? errorClasses : normalClasses;
+    const designationInputClasses = designationInputHasError ? errorClasses : normalClasses;
+    const emailInputClasses = emailInputHasError || emailExists ? errorClasses : normalClasses;
+    const phoneInputClasses = phoneInputHasError || phoneExists ? errorClasses : normalClasses;
+    const userNameInputClasses = userNameInputHasError || usernameExists ? errorClasses : normalClasses;
     const passwordInputClasses = passwordInputHasError ? errorClasses : normalClasses;
     const confirmPasswordInputClasses = confirmPasswordInputHasError ? errorClasses : normalClasses;
 
-    const insertUser = (body) => {
-        return fetch('http://localhost:5000/register', {
-            'method': 'POST',
-            headers : {
-                'Content-Type': 'application/json'
+    const [isRegistering, setIsRegistering] = useState(false);
+
+    const registerHandler = (data) => {
+        setIsRegistering(false);
+        if (data.accepted) {
+            history.push("/registersuccess");
+        } else {
+            setRollExists(data.rollExists);
+            setEmailExists(data.emailExists);
+            setPhoneExists(data.phoneExists);
+            setUsernameExists(data.usernameExists);
+        }
+    };
+
+    const insertUser = async (body) => {
+        setIsRegistering(true);
+        window.scroll(0, 0);
+        return await fetch("http://localhost:5000/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
             },
-            body: JSON.stringify(body)
+            body: JSON.stringify(body),
         })
-        .then(response => response.json())
-        .catch(error => console.log(error))
-    }
+            .then((response) => response.json())
+            .then((data) => registerHandler(data))
+            .catch((error) => console.log(error));
+    };
 
     const submitHandler = (event) => {
         event.preventDefault();
+
+        if (!formIsValid) {
+            return;
+        }
 
         const user = {
             name,
@@ -125,7 +166,7 @@ const RegisterForm = () => {
             email,
             phone,
             userName,
-            password
+            password,
         };
 
         insertUser(user);
@@ -137,148 +178,183 @@ const RegisterForm = () => {
         resetUserName();
         resetPassword();
         resetConfirmPassword();
-
-        console.log(user);
     };
 
-    return (
-        <form className={`${classes["form"]}`} autoComplete="off" onSubmit={submitHandler}>
-            <h1 className={classes["form__title"]}>Register</h1>
-            <div className={`${classes["form__inputs"]}`}>
-                <div className={classes["input"]}>
-                    <label className={`${classes["input__label"]}`} htmlFor="name">
-                        Name
-                    </label>
-                    <input
-                        className={nameInputClasses}
-                        id="name"
-                        type="text"
-                        value={name}
-                        name="name"
-                        onChange={nameChangeHandler}
-                        onBlur={nameInputBlurHandler}
-                    />
-                    {nameInputHasError && <p className={classes["input__message"]}>Name must not be empty.</p>}
+    const Loader = <h1 className={classes["registering"]}>Registering...</h1>;
+
+    if (!isRegistering) {
+        return (
+            <form className={`${classes["form"]}`} autoComplete="off" onSubmit={submitHandler}>
+                <h1 className={classes["form__title"]}>Register</h1>
+                <div className={`${classes["form__inputs"]}`}>
+                    <div className={classes["input"]}>
+                        <label className={`${classes["input__label"]}`} htmlFor="name">
+                            Name
+                        </label>
+                        <input
+                            className={nameInputClasses}
+                            id="name"
+                            type="text"
+                            value={name}
+                            name="name"
+                            onChange={nameChangeHandler}
+                            onBlur={nameInputBlurHandler}
+                        />
+                        {nameInputHasError && <p className={classes["input__message"]}>Name must not be empty.</p>}
+                    </div>
+                    <div className={classes["input"]}>
+                        <label className={`${classes["input__label"]}`} htmlFor="roll">
+                            Roll Number
+                        </label>
+                        <input
+                            className={rollInputClasses}
+                            id="roll"
+                            type="text"
+                            value={roll}
+                            name="roll"
+                            onChange={rollChangeHandler}
+                            onBlur={rollInputBlurHandler}
+                        />
+                        {(rollInputHasError || rollExists) && (
+                            <p className={classes["input__message"]}>
+                                {rollInputHasError ? "Please enter a valid roll number." : "Roll number already exists."}
+                            </p>
+                        )}
+                    </div>
+                    <div className={classes["input"]}>
+                        <label className={`${classes["input__label"]}`} htmlFor="roll">
+                            Choose Designation
+                        </label>
+                        <select
+                            className={designationInputClasses}
+                            value={designation}
+                            onChange={designationChangeHandler}
+                            onBlur={designationInputBlurHandler}
+                        >
+                            <option value="" disabled>
+                                Select your designation
+                            </option>
+                            <option value="UG Student" className={classes["option"]}>
+                                UG Student
+                            </option>
+                            <option value="PG Student" className={classes["option"]}>
+                                PG Student
+                            </option>
+                            <option value="Research Scholar" className={classes["option"]}>
+                                Research Scholar
+                            </option>
+                            <option value="Faculty" className={classes["option"]}>
+                                Faculty
+                            </option>
+                        </select>
+                        {designationInputHasError && (
+                            <p className={classes["input__message"]}>
+                                Please choose a designation.
+                            </p>
+                        )}
+                    </div>
+                    <div className={classes["input"]}>
+                        <label className={`${classes["input__label"]}`} htmlFor="email">
+                            Email
+                        </label>
+                        <input
+                            className={emailInputClasses}
+                            id="email"
+                            type="text"
+                            value={email}
+                            name="email"
+                            onChange={emailChangeHandler}
+                            onBlur={emailInputBlurHandler}
+                        />
+                        {(emailInputHasError || emailExists) && (
+                            <p className={classes["input__message"]}>
+                                {emailInputHasError ? "Please enter a valid email." : "Email already exists."}
+                            </p>
+                        )}
+                    </div>
+                    <div className={classes["input"]}>
+                        <label className={`${classes["input__label"]}`} htmlFor="phone">
+                            Phone
+                        </label>
+                        <input
+                            className={phoneInputClasses}
+                            id="phone"
+                            type="text"
+                            value={phone}
+                            name="phone"
+                            onChange={phoneChangeHandler}
+                            onBlur={phoneInputBlurHandler}
+                        />
+                        {(phoneInputHasError || phoneExists) && (
+                            <p className={classes["input__message"]}>
+                                {phoneInputHasError ? "Please enter a valid phone number." : "Phone already exists."}
+                            </p>
+                        )}
+                    </div>
+                    <div className={classes["input"]}>
+                        <label className={`${classes["input__label"]}`} htmlFor="userName">
+                            Username
+                        </label>
+                        <input
+                            className={userNameInputClasses}
+                            id="userName"
+                            type="text"
+                            value={userName}
+                            name="username"
+                            onChange={userNameChangeHandler}
+                            onBlur={userNameInputBlurHandler}
+                        />
+                        {(userNameInputHasError || usernameExists) && (
+                            <p className={classes["input__message"]}>
+                                {userNameInputHasError ? "Username must not be empty." : "Username already exists."}
+                            </p>
+                        )}
+                    </div>
+                    <div className={`${classes["input"]}`}>
+                        <label className={`${classes["input__label"]}`} htmlFor="password">
+                            Password
+                        </label>
+                        <input
+                            className={passwordInputClasses}
+                            id="password"
+                            type="password"
+                            value={password}
+                            name="password"
+                            onChange={passwordChangeHandler}
+                            onBlur={passwordInputBlurHandler}
+                        />
+                        {passwordInputHasError && <p className={classes["input__message"]}>Password cannot be empty.</p>}
+                    </div>
+                    <div className={`${classes["input"]}`}>
+                        <label className={`${classes["input__label"]}`} htmlFor="confirm-password">
+                            Confirm Password
+                        </label>
+                        <input
+                            className={confirmPasswordInputClasses}
+                            id="cofirm-password"
+                            type="password"
+                            value={confirmPassword}
+                            name="confirm-password"
+                            onChange={confirmPasswordChangeHandler}
+                            onBlur={confirmPasswordInputBlurHandler}
+                        />
+                        {confirmPasswordInputHasError && (
+                            <p className={classes["input__message"]}>Passwords do not match.</p>
+                        )}
+                    </div>
                 </div>
-                <div className={classes["input"]}>
-                    <label className={`${classes["input__label"]}`} htmlFor="roll">
-                        Roll Number
-                    </label>
-                    <input
-                        className={rollInputClasses}
-                        id="roll"
-                        type="text"
-                        value={roll}
-                        name="roll"
-                        onChange={rollChangeHandler}
-                        onBlur={rollInputBlurHandler}
-                    />
-                    {rollInputHasError && (
-                        <p className={classes["input__message"]}>Please enter a valid roll number.</p>
-                    )}
+                <div className={`${classes["form__btn-group"]}`}>
+                    <button
+                        className={`${classes["form__btn"]}`}
+                        // disabled={!formIsValid}
+                    >
+                        Register
+                    </button>
                 </div>
-                <div className={classes["input"]}>
-                    <label className={`${classes["input__label"]}`} htmlFor="roll">
-                        Choose Designation
-                    </label>
-                    <select className={classes["select__field"]} value={designation} onChange={designationChangeHandler}>
-                        <option value="" disabled>Select your designation</option>
-                        <option value="UG Student" className={classes["option"]}>UG Student</option>
-                        <option value="PG Student" className={classes["option"]}>PG Student</option>
-                        <option value="Research Scholar" className={classes["option"]}>Research Scholar</option>
-                        <option value="Faculty" className={classes["option"]}>Faculty</option>
-                    </select>
-                </div>
-                <div className={classes["input"]}>
-                    <label className={`${classes["input__label"]}`} htmlFor="email">
-                        Email
-                    </label>
-                    <input
-                        className={emailInputClasses}
-                        id="email"
-                        type="text"
-                        value={email}
-                        name="email"
-                        onChange={emailChangeHandler}
-                        onBlur={emailInputBlurHandler}
-                    />
-                    {emailInputHasError && <p className={classes["input__message"]}>Please enter a valid email.</p>}
-                </div>
-                <div className={classes["input"]}>
-                    <label className={`${classes["input__label"]}`} htmlFor="phone">
-                        Phone
-                    </label>
-                    <input
-                        className={phoneInputClasses}
-                        id="phone"
-                        type="text"
-                        value={phone}
-                        name="phone"
-                        onChange={phoneChangeHandler}
-                        onBlur={phoneInputBlurHandler}
-                    />
-                    {phoneInputHasError && (
-                        <p className={classes["input__message"]}>Please enter a valid phone number.</p>
-                    )}
-                </div>
-                <div className={classes["input"]}>
-                    <label className={`${classes["input__label"]}`} htmlFor="userName">
-                        Username
-                    </label>
-                    <input
-                        className={userNameInputClasses}
-                        id="userName"
-                        type="text"
-                        value={userName}
-                        name="username"
-                        onChange={userNameChangeHandler}
-                        onBlur={userNameInputBlurHandler}
-                    />
-                    {userNameInputHasError && <p className={classes["input__message"]}>Username must not be empty.</p>}
-                </div>
-                <div className={`${classes["input"]}`}>
-                    <label className={`${classes["input__label"]}`} htmlFor="password">
-                        Password
-                    </label>
-                    <input
-                        className={passwordInputClasses}
-                        id="password"
-                        type="password"
-                        value={password}
-                        name="password"
-                        onChange={passwordChangeHandler}
-                        onBlur={passwordInputBlurHandler}
-                    />
-                    {passwordInputHasError && <p className={classes["input__message"]}>Password cannot be empty.</p>}
-                </div>
-                <div className={`${classes["input"]}`}>
-                    <label className={`${classes["input__label"]}`} htmlFor="confirm-password">
-                        Confirm Password
-                    </label>
-                    <input
-                        className={confirmPasswordInputClasses}
-                        id="cofirm-password"
-                        type="password"
-                        value={confirmPassword}
-                        name="confirm-password"
-                        onChange={confirmPasswordChangeHandler}
-                        onBlur={confirmPasswordInputBlurHandler}
-                    />
-                    {confirmPasswordInputHasError && (
-                        <p className={classes["input__message"]}>Passwords do not match.</p>
-                    )}
-                </div>
-            </div>
-            <div className={`${classes["form__btn-group"]}`}>
-                <button
-                    className={`${classes["form__btn"]}`}
-                    // disabled={!formIsValid}
-                >
-                    Register
-                </button>
-            </div>
-        </form>
-    );
+            </form>);
+    } else {
+        return Loader;
+    }
 };
 
 export default RegisterForm;
