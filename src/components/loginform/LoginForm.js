@@ -1,9 +1,14 @@
+import { useState } from "react";
+import { useHistory } from "react-router-dom";
 import useInput from "../../hooks/use-input";
 import classes from "./LoginForm.module.css";
 
 const isNotEmpty = (value) => value.trim() !== "";
 
 const Login = () => {
+
+    const history = useHistory();
+
     const {
         value: userName,
         isValid: userNameIsValid,
@@ -22,20 +27,66 @@ const Login = () => {
         reset: resetPassword,
     } = useInput(isNotEmpty);
 
+    const [usernameExists, setUsernameExists] = useState(true);
+    const [isPasswordCorrect, setIsPasswordCorrect] = useState(true);
+
+
     let formIsValid = false;
-    if (userNameIsValid && passwordIsValid) formIsValid = true;
+    if (userNameIsValid && !usernameExists && passwordIsValid) formIsValid = true;
 
     const normalClasses = classes["input__field"];
     const errorClasses = classes["input__error"];
 
-    const userNameInputClasses = userNameInputHasError ? errorClasses : normalClasses;
-    const passwordInputClasses = passwordInputHasError ? errorClasses : normalClasses;
+    const userNameInputClasses = userNameInputHasError || !usernameExists ? errorClasses : normalClasses;
+    const passwordInputClasses = passwordInputHasError || !isPasswordCorrect ? errorClasses : normalClasses;
+
+    const loginHandler = (data) => {
+        if (!data.isRegistered) {
+            setUsernameExists(false);
+        } else {
+            if (data.isPasswordCorrect) {
+                setIsPasswordCorrect(true);
+                history.push("/profile");
+            } else {
+                setIsPasswordCorrect(false);
+            }
+        }
+    }
+
+    const loginUser = async (body) => {
+        window.scroll(0, 0);
+        return await fetch("http://localhost:5000/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => {loginHandler(data); return data;})
+            .catch((error) => console.log(error));
+    };
+
+    const masterUsernameChangeHandler = (event) => {
+        userNameChangeHandler(event);
+        setIsPasswordCorrect(true);
+        setUsernameExists(true);
+    }
+
+    const masterPasswordChangeHandler = (event) => {
+        passwordChangeHandler(event);
+        setIsPasswordCorrect(true);
+    }
 
     const submitHandler = (event) => {
         event.preventDefault();
 
-        resetUserName();
-        resetPassword();
+        const user = {
+            userName: userName.trim(),
+            password
+        };
+
+        loginUser(user);
     };
 
     return (
@@ -52,10 +103,10 @@ const Login = () => {
                         type="text"
                         value={userName}
                         name="username"
-                        onChange={userNameChangeHandler}
+                        onChange={masterUsernameChangeHandler}
                         onBlur={userNameInputBlurHandler}
                     />
-                    {userNameInputHasError && <p className={classes["input__message"]}>Username must not be empty.</p>}
+                    {(userNameInputHasError || !usernameExists) && <p className={classes["input__message"]}>{userNameInputHasError ? "Username must not be empty." : "Username does not exist."}</p>}
                 </div>
                 <div className={`${classes["input"]}`}>
                     <label className={`${classes["input__label"]}`} htmlFor="password">
@@ -67,10 +118,10 @@ const Login = () => {
                         type="password"
                         value={password}
                         name="password"
-                        onChange={passwordChangeHandler}
+                        onChange={masterPasswordChangeHandler}
                         onBlur={passwordInputBlurHandler}
                     />
-                    {passwordInputHasError && <p className={classes["input__message"]}>Password cannot be empty.</p>}
+                    {passwordInputHasError || !isPasswordCorrect && <p className={classes["input__message"]}>{passwordInputHasError ? "Password cannot be empty." : "Incorrect password."}</p>}
                 </div>
             </div>
             <div className={`${classes["form__btn-group"]}`}>

@@ -6,13 +6,11 @@ import { useState, useRef } from "react";
 import { Route, Switch } from "react-router-dom";
 import { useHistory } from "react-router-dom";
 
-
 const isNotEmpty = (value) => value.trim() !== "";
 
 const isEmail = (value) => value.includes("@");
 
 const RegisterForm = () => {
-
     const history = useHistory();
 
     const {
@@ -39,7 +37,7 @@ const RegisterForm = () => {
         hasError: designationInputHasError,
         valueChangeHandler: designationChangeHandler,
         inputBlurHandler: designationInputBlurHandler,
-        reset: resetDesignation
+        reset: resetDesignation,
     } = useInput(isNotEmpty);
 
     const {
@@ -106,13 +104,23 @@ const RegisterForm = () => {
     const [usernameExists, setUsernameExists] = useState(false);
 
     let formIsValid = false;
-    if (nameIsValid && rollIsValid && designationIsValid && emailIsValid && phoneIsValid && userNameIsValid && passwordIsValid) formIsValid = true;
+    if (
+        nameIsValid &&
+        rollIsValid &&
+        !rollExists &&
+        designationIsValid &&
+        emailIsValid &&
+        !emailExists &&
+        phoneIsValid &&
+        !phoneExists &&
+        userNameIsValid &&
+        !usernameExists &&
+        passwordIsValid
+    )
+        formIsValid = true;
 
     const normalClasses = classes["input__field"];
     const errorClasses = classes["input__error"];
-
-    // const [designationHasError, setDesignationHasError] = useState(true);
-    // const [designationTo]
 
     const nameInputClasses = nameInputHasError ? errorClasses : normalClasses;
     const rollInputClasses = rollInputHasError || rollExists ? errorClasses : normalClasses;
@@ -148,7 +156,7 @@ const RegisterForm = () => {
             body: JSON.stringify(body),
         })
             .then((response) => response.json())
-            .then((data) => registerHandler(data))
+            .then((data) => {registerHandler(data); return data;})
             .catch((error) => console.log(error));
     };
 
@@ -160,24 +168,44 @@ const RegisterForm = () => {
         }
 
         const user = {
-            name,
-            roll,
+            name: name.trim(),
+            roll: roll.trim(),
             designation,
-            email,
-            phone,
-            userName,
+            email: email.trim(),
+            phone: phone.trim(),
+            userName: userName.trim(),
             password,
         };
 
-        insertUser(user);
+        insertUser(user).then((data) => {
+            resetName();
+            if (!data.rollExists) resetRoll();
+            if (!data.emailExists) resetEmail();
+            if (!data.phoneExists) resetPhone();
+            if (!data.usernameExists) resetUserName();
+            resetPassword();
+            resetConfirmPassword();
+        });
+    };
 
-        resetName();
-        resetRoll();
-        resetEmail();
-        resetPhone();
-        resetUserName();
-        resetPassword();
-        resetConfirmPassword();
+    const masterPhoneChangeHandler = (event) => {
+        phoneChangeHandler(event);
+        setPhoneExists(false);
+    };
+
+    const masterEmailChangeHandler = (event) => {
+        emailChangeHandler(event);
+        setEmailExists(false);
+    };
+
+    const masterUsernameChangeHandler = (event) => {
+        userNameChangeHandler(event);
+        setUsernameExists(false);
+    };
+
+    const masterRollChangeHandler = (event) => {
+        rollChangeHandler(event);
+        setRollExists(false);
     };
 
     const Loader = <h1 className={classes["registering"]}>Registering...</h1>;
@@ -212,12 +240,14 @@ const RegisterForm = () => {
                             type="text"
                             value={roll}
                             name="roll"
-                            onChange={rollChangeHandler}
+                            onChange={masterRollChangeHandler}
                             onBlur={rollInputBlurHandler}
                         />
                         {(rollInputHasError || rollExists) && (
                             <p className={classes["input__message"]}>
-                                {rollInputHasError ? "Please enter a valid roll number." : "Roll number already exists."}
+                                {rollInputHasError
+                                    ? "Please enter a valid roll number."
+                                    : "Roll number already exists."}
                             </p>
                         )}
                     </div>
@@ -248,9 +278,7 @@ const RegisterForm = () => {
                             </option>
                         </select>
                         {designationInputHasError && (
-                            <p className={classes["input__message"]}>
-                                Please choose a designation.
-                            </p>
+                            <p className={classes["input__message"]}>Please choose a designation.</p>
                         )}
                     </div>
                     <div className={classes["input"]}>
@@ -263,7 +291,7 @@ const RegisterForm = () => {
                             type="text"
                             value={email}
                             name="email"
-                            onChange={emailChangeHandler}
+                            onChange={masterEmailChangeHandler}
                             onBlur={emailInputBlurHandler}
                         />
                         {(emailInputHasError || emailExists) && (
@@ -282,7 +310,7 @@ const RegisterForm = () => {
                             type="text"
                             value={phone}
                             name="phone"
-                            onChange={phoneChangeHandler}
+                            onChange={masterPhoneChangeHandler}
                             onBlur={phoneInputBlurHandler}
                         />
                         {(phoneInputHasError || phoneExists) && (
@@ -301,7 +329,7 @@ const RegisterForm = () => {
                             type="text"
                             value={userName}
                             name="username"
-                            onChange={userNameChangeHandler}
+                            onChange={masterUsernameChangeHandler}
                             onBlur={userNameInputBlurHandler}
                         />
                         {(userNameInputHasError || usernameExists) && (
@@ -323,7 +351,9 @@ const RegisterForm = () => {
                             onChange={passwordChangeHandler}
                             onBlur={passwordInputBlurHandler}
                         />
-                        {passwordInputHasError && <p className={classes["input__message"]}>Password cannot be empty.</p>}
+                        {passwordInputHasError && (
+                            <p className={classes["input__message"]}>Password cannot be empty.</p>
+                        )}
                     </div>
                     <div className={`${classes["input"]}`}>
                         <label className={`${classes["input__label"]}`} htmlFor="confirm-password">
@@ -351,7 +381,8 @@ const RegisterForm = () => {
                         Register
                     </button>
                 </div>
-            </form>);
+            </form>
+        );
     } else {
         return Loader;
     }
