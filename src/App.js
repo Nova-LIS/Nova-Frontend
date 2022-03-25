@@ -5,6 +5,8 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import ComingSoon from "./pages/comingsoon/ComingSoon";
 import RegisterSuccess from "./pages/registersuccess/RegisterSuccess";
+import About from "./pages/about/About";
+import Contact from "./pages/contact/Contact";
 import Profile from "./pages/profile/Profile";
 import { Route, Switch, Redirect } from "react-router-dom";
 
@@ -17,6 +19,8 @@ const App = () => {
                     <Redirect to="/home" />
                 </Route>
                 <Route path="/home" component={Home} exact />
+                <Route path="/about" component={About} exact />
+                <Route path="/contact" component={Contact} exact />
                 <Route path="/login" component={Login} exact />
                 <Route path="/register" component={Register} exact />
                 <Route path="/profile" component={Profile} exact />

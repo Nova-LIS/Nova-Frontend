@@ -48,4 +48,24 @@
     flex-grow: 4;
     height: 100%;
     background-color: rgba(255, 0, 0, .5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.issued {
+    background-color: rgba(25, 124, 21, .5);
+}
+
+.returned {
+    background-color: rgba(124, 124, 25, .5);
+}
+
+.reserved {
+    background-color: rgba(50, 120, 150, .5);
+}
+
+.personal {
+    background-color: rgba(240, 75, 60, .5);
 }

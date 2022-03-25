@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { NavLink } from "react-router-dom";
 
 import ScrollContext from "../../store/scroll-context";
+import UserContext from "../../store/user-context";
 import classes from "./Navbar.module.css";
 
 import logo from "./react.png";
@@ -53,6 +54,27 @@ const Navbar = () => {
     // );
 
     const scrollCtx = useContext(ScrollContext);
+    const userCtx = useContext(UserContext);
+
+    const logoutBtn = (
+        <div className={classes["nav-btn__group"]}>
+            <NavLink to="/profile" className={classes["profile"]}></NavLink>
+            <div className={`${classes["nav-btn"]} ${classes["logout"]}`} onClick={userCtx.onLogout}>
+                Logout
+            </div>
+        </div>
+    );
+
+    const loginRegisterBtns = (
+        <div className={classes["nav-btn__group"]}>
+            <NavLink to="/login" className={`${classes["nav-btn"]} ${classes["login"]}`}>
+                Login
+            </NavLink>
+            <NavLink to="/register" className={`${classes["nav-btn"]} ${classes["register"]}`}>
+                Register
+            </NavLink>
+        </div>
+    );
 
     const menuToggleIcon = !scrollCtx.isSecondaryNavOpen ? (
         <svg viewBox="0 0 100 80" width="40" height="40" className={classes["hamburger"]}>
@@ -67,7 +89,8 @@ const Navbar = () => {
         </svg>
     );
 
-    const secondaryHeaderClasses = classes["secondary-header"] + (scrollCtx.isSecondaryNavOpen ? " " + classes["active"] : "");
+    const secondaryHeaderClasses =
+        classes["secondary-header"] + (scrollCtx.isSecondaryNavOpen ? " " + classes["active"] : "");
     return (
         <header className={classes["navbar"]}>
             <header className={classes["primary-header"]}>
@@ -91,12 +114,12 @@ const Navbar = () => {
                         </li>
                         <li>
                             <NavLink to="/about" className={classes["primary-navigation__link"]}>
-                                About
+                                About Nova LIS
                             </NavLink>
                         </li>
                         <li>
                             <NavLink to="/contact" className={classes["primary-navigation__link"]}>
-                                Contact
+                                Contact Us
                             </NavLink>
                         </li>
                         <li>
@@ -106,14 +129,7 @@ const Navbar = () => {
                         </li>
                     </ul>
                 </nav>
-                <div className={classes["nav-btn__group"]}>
-                    <NavLink to="/login" className={`${classes["nav-btn"]} ${classes["login"]}`}>
-                        Login
-                    </NavLink>
-                    <NavLink to="/register" className={`${classes["nav-btn"]} ${classes["register"]}`}>
-                        Register
-                    </NavLink>
-                </div>
+                {userCtx.isLoggedIn ? logoutBtn : loginRegisterBtns}
             </header>
             <header className={secondaryHeaderClasses}>
                 <ul className={classes["secondary-navigation__list"]}>

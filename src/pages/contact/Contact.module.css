@@ -1,0 +1,30 @@
+.img {
+    width: 10rem;
+}
+
+.contact__container {
+    background-image: url("./imgs/contact-bkg.jpg");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.contact {
+    backdrop-filter: blur(2px);
+    background-color: rgba(10, 10, 10, .1);
+    padding: 15rem 2rem 10rem;
+    display: flex;
+    flex-direction: column;
+    gap: 4rem;
+}
+
+.info {
+    width: 40rem;
+    color: var(--color-white);
+}
+
+.contact-block {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+}

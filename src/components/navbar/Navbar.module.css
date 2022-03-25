@@ -82,6 +82,24 @@
     background-color: transparent;
 }
 
+.logout {
+    color: var(--color-white);
+    background-color: var(--color-black);
+    cursor: pointer;
+}
+
+.logout:hover {
+    color: var(--color-black);
+    background-color: transparent;
+}
+
+.profile {
+    background-color: cyan;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50rem;
+}
+
 .register {
     color: var(--color-black);
     background-color: transparent;

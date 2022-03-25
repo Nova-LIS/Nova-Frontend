@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import useInput from "../../hooks/use-input";
 import classes from "./LoginForm.module.css";
+
+import UserContext from "../../store/user-context";
 
 const isNotEmpty = (value) => value.trim() !== "";
 
 const Login = () => {
 
     const history = useHistory();
+
+    const userCtx = useContext(UserContext);
 
     const {
         value: userName,
@@ -46,7 +50,15 @@ const Login = () => {
         } else {
             if (data.isPasswordCorrect) {
                 setIsPasswordCorrect(true);
-                history.push("/profile");
+                const user = {
+                    name: data.name,
+                    roll: data.roll,
+                    designation: data.designation,
+                    phone: data.phone,
+                    email: data.email,
+                    userName: data.userName
+                };
+                userCtx.onLogin(user).then(() => history.push("/profile"));
             } else {
                 setIsPasswordCorrect(false);
             }
@@ -55,7 +67,7 @@ const Login = () => {
 
     const loginUser = async (body) => {
         window.scroll(0, 0);
-        return await fetch("http://localhost:5000/login", {
+        await fetch("http://localhost:5000/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -63,7 +75,7 @@ const Login = () => {
             body: JSON.stringify(body),
         })
             .then((response) => response.json())
-            .then((data) => {loginHandler(data); return data;})
+            .then((data) => loginHandler(data))
             .catch((error) => console.log(error));
     };
 
