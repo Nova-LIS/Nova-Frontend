@@ -1,32 +1,10 @@
-.book__cover {
-    background-image: url("./imgs/book.jpg");
-    background-size: cover;
+.book__container {
+    background-image: url("./imgs/book-bkg.jpg");
+    background-position: center;
     background-repeat: no-repeat;
-    width: 20rem;
-    height: 30rem;
-    border-radius: .5rem;
-    cursor: pointer;
-    border: 5px solid var(--color-white);
-    transition: all .2s;
-}
-
-.book__cover:hover {
-    background: linear-gradient( rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3) ), url("imgs/book.jpg");
     background-size: cover;
-    background-repeat: no-repeat;
-    border: 5px solid #75c74e;
 }
 
-.name {
-    margin-top: 2rem;
-    font-weight: 600;
-    font-size: 1.8rem;
-    color: var(--color-white);
+.book {
+    padding: 15rem 0 20rem;
 }
-
-.author {
-    font-weight: 400;
-    font-size: 1.6rem;
-    color: #ddd;
-}
-

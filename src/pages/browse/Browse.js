@@ -1,46 +1,38 @@
 import { useState } from "react";
 import classes from "./Browse.module.css";
+import BookList from "../../components/booklist/BookList";
+import BrowseForm from "../../components/browseform/BrowseForm";
 
 const Browse = () => {
-    const [bookname, setBookname] = useState("");
+    const [bookData, setBookData] = useState({ isLoaded: false, foundBook: false, books: null, index: 0 });
 
-    const booknameChangeHandler = (event) => {
-        setBookname(event.target.value);
-    };
-
-    const getBooks = async (body) => {
-        window.scroll(0, 0);
-        return await fetch("http://localhost:5000/browse", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        })
-            .then((response) => response.json())
-            .then((data) => console.log(data))
-            .catch((error) => console.log(error, "Hi"));
-    };
-
-    const submitHandler = (event) => {
-        event.preventDefault();
-
-        const data = {
-            bookname
-        };
-
-        console.log(data);
-
-        getBooks(data);
+    const bookQueryEndHandler = (data) => {
+        const thisBooks = [];
+        if (data.foundBook) {
+            for (let book of data.books) {
+                thisBooks.push({
+                    bookNumber: book.booknumber,
+                    bookName: book.title,
+                    author: book.author,
+                    cover: book.image_url,
+                });
+            }
+        }
+        
+        setBookData({ isLoaded: true, books: thisBooks, foundBook: data.foundBook, index: 0 });
     };
 
     return (
-        <div className={classes["browse"]}>
-            <form onSubmit={submitHandler}>
-                <label htmlFor="search">Search Bar</label>
-                <input type="text" value={bookname} onChange={booknameChangeHandler}></input>
-                <button>Search</button>
-            </form>
+        <div className={classes["browse__container"]}>
+            <div className={classes["browse"]}>
+                <BrowseForm onEndBookQuery={bookQueryEndHandler} />
+                {bookData.isLoaded &&
+                    (bookData.foundBook ? (
+                        <BookList title={`Found ${bookData.books.length} books`} books={bookData.books.slice(0, 50)} />
+                    ) : (
+                        <h1>No books found</h1>
+                    ))}
+            </div>
         </div>
     );
 };

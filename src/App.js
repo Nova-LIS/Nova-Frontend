@@ -6,6 +6,7 @@ import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import ComingSoon from "./pages/comingsoon/ComingSoon";
 import RegisterSuccess from "./pages/registersuccess/RegisterSuccess";
+import Book from "./components/book/Book";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
 import Profile from "./pages/profile/Profile";
@@ -24,6 +25,7 @@ const App = () => {
                 <Route path="/about" component={About} exact />
                 <Route path="/contact" component={Contact} exact />
                 <Route path="/login" component={Login} exact />
+                <Route path="/book/:bookId" component={Book} />
                 <Route path="/register" component={Register} exact />
                 <Route path="/profile" component={Profile} exact />
                 <Route path="/registersuccess" component={RegisterSuccess} exact />
