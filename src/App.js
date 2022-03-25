@@ -1,6 +1,7 @@
 import Navbar from "./components/navbar/Navbar";
 import Footer from "./components/footer/Footer";
 import Home from "./pages/home/Home";
+import Browse from "./pages/browse/Browse";
 import Login from "./pages/login/Login";
 import Register from "./pages/register/Register";
 import ComingSoon from "./pages/comingsoon/ComingSoon";
@@ -19,6 +20,7 @@ const App = () => {
                     <Redirect to="/home" />
                 </Route>
                 <Route path="/home" component={Home} exact />
+                <Route path="/browse" component={Browse} exact />
                 <Route path="/about" component={About} exact />
                 <Route path="/contact" component={Contact} exact />
                 <Route path="/login" component={Login} exact />
