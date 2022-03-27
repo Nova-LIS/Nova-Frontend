@@ -16,6 +16,7 @@ const Browse = () => {
                     bookName: book.title,
                     author: book.author,
                     cover: book.image_url,
+                    type: "Display"
                 });
             }
         }

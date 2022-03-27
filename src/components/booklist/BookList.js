@@ -18,6 +18,12 @@ const BookList = (props) => {
         </div>
     );
 
+    let o = new Intl.DateTimeFormat("en" , {
+        timeStyle: "short",
+        dateStyle: "long"
+    });
+    console.log(props.books.length);
+
     return (
         <div className={classes["booklist"]}>
             <div className={classes["header"]}>
@@ -26,16 +32,21 @@ const BookList = (props) => {
             </div>
             <div className={classes["booklist__rule"]}></div>
             <ul className={classes["booklist__list"]}>
-                {props.books.map((book) => {
+                {props.books.map((book, index) => {
                     return (
-                        <li key={book.bookNumber}>
+                        <li key={index}>
                             <BookCard
                                 id={book.bookId}
-                                key={book.bookId}
+                                tId={book.tId}
+                                key={book.tId}
                                 number={book.bookNumber}
                                 bookName={book.bookName}
                                 author={book.author}
                                 cover={book.cover}
+                                type={book.type}
+                                issuedOn={(book.type === "Issued" || book.type === "Returned") ? o.format(new Date(new Date(book.issuedOn).toISOString())) : ""}
+                                expectedReturn={(book.type === "Issued") ? o.format(new Date(new Date(book.expectedReturn).toISOString())): ""}
+                                returnedOn={(book.type === "Returned") ? o.format(new Date(new Date(book.returnedOn).toISOString())): ""}
                             />
                         </li>
                     );

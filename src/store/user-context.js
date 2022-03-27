@@ -1,3 +1,4 @@
+import { faTruckLoading } from "@fortawesome/free-solid-svg-icons";
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 
@@ -12,22 +13,21 @@ const UserContext = React.createContext({
     onReturnedFocus: () => {},
     onReservedFocus: () => {},
     onPersonalFocus: () => {},
-    onEndBookQuery: () => {},
+    onBookQuery: () => {},
 });
 
 export const UserContextProvider = (props) => {
     const history = useHistory();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
-    const [inFocus, setInFocus] = useState("Personal Information");
+    const [inFocus, setInFocus] = useState("Issued Books");
     const [books, setBooks] = useState({ isLoaded: false, issued: [], returned: [] });
 
     const onLogin = (data) => {
         setIsLoggedIn(true);
         setUser(data);
+        setInFocus("Issued Books");
         history.push("/profile/" + data.userName);
-
-        // await fetch("")
     };
 
     const onLogout = () => {
@@ -52,25 +52,54 @@ export const UserContextProvider = (props) => {
         setInFocus("Personal Information");
     };
 
-    const onEndBookQuery = (data) => {
-        const issuedBooks = [];
-        const returnedBooks = [];
-        for (let sa of data) {
-            if (!sa.returned) {
-                issuedBooks.push({
-                    bookName: sa.title,
-                    author: sa.author,
-                    cover: sa.image_url,
-                });
-            } else {
-                returnedBooks.push({
-                    bookName: sa.title,
-                    author: sa.author,
-                    cover: sa.image_url,
-                });
-            }
-        }
-        setBooks({ isLoaded: true, issued: issuedBooks, returned: returnedBooks });
+    const onBookQuery = async (section) => {
+        setBooks((prevBooks) => {
+            return { ...prevBooks, isLoaded: false };
+        });
+
+        window.scroll(0, 0);
+        await fetch("http://localhost:5000/profile/" + user.userName, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const issuedBooks = [];
+                const returnedBooks = [];
+                for (let sa of data) {
+                    console.log(sa);
+                    if (!sa.returned) {
+                        issuedBooks.unshift({
+                            tId: sa.id,
+                            bookId: sa.bookid,
+                            bookNumber: sa.booknumber,
+                            bookName: sa.title,
+                            author: sa.author,
+                            cover: sa.image_url,
+                            type: "Issued",
+                            issuedOn: sa.issuedate,
+                            expectedReturn: sa.expectedreturn,
+                        });
+                    } else {
+                        returnedBooks.unshift({
+                            bookId: sa.bookid,
+                            bookNumber: sa.booknumber,
+                            bookName: sa.title,
+                            author: sa.author,
+                            cover: sa.image_url,
+                            type: "Returned",
+                            issuedOn: sa.issuedate,
+                            returnedOn: sa.returndate,
+                        });
+                    }
+                }
+                setBooks({ isLoaded: true, issued: issuedBooks, returned: returnedBooks });
+                setInFocus(section);
+                history.push("/profile/" + user.userName);
+            })
+            .catch((error) => console.log(error));
     };
 
     return (
@@ -86,7 +115,7 @@ export const UserContextProvider = (props) => {
                 onReservedFocus,
                 onReturnedFocus,
                 onPersonalFocus,
-                onEndBookQuery,
+                onBookQuery,
             }}
         >
             {props.children}

@@ -31,7 +31,7 @@ const Book = () => {
         <div className={classes["book"]}>
             <div className={classes["img__container"]}>
                 <img src={bookData.book.image_url} alt="book" className={classes["cover"]} />
-                <button className={classes["issue"]}>Issue</button>
+                {/* <button className={classes["issue"]}>Issue</button> */}
             </div>
             <div className={classes["info"]}>
                 <p className={`${classes["info-block"]} ${classes["title"]}`}>{bookData.book.title}</p>
