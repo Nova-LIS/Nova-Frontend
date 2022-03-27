@@ -16,7 +16,7 @@ const SearchBar = (props) => {
                     className={classes.searchbar__input}
                     type="text"
                     value={searchText}
-                    placeHolder={props.placeholder}
+                    placeholder={props.placeholder}
                     onChange={searchTextChangeHandler}
                 ></input>
                 <button onClick={() => props.onSubmit(searchText)} className={classes["go-btn"]}>Go</button>

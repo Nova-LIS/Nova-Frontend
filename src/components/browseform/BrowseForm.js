@@ -14,7 +14,7 @@ const BrowseForm = (props) => {
             body: JSON.stringify(body),
         })
             .then((response) => response.json())
-            .then((data) => {console.log(data); props.onEndBookQuery(data);})
+            .then((data) => {props.onEndBookQuery(data);})
             .catch((error) => console.log(error, "Hi"));
     };
 

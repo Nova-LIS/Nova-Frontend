@@ -1,17 +1,36 @@
 import classes from "./BookCard.module.css";
 import { useHistory } from "react-router-dom";
-import { NavLink } from "react-router-dom";
-
+import { useContext } from "react";
+import UserContext from "../../store/user-context";
 const Book = (props) => {
+
+    const userCtx = useContext(UserContext);
 
     const history = useHistory();
 
     const detailsNavHandler = () => {
-        history.push(`/book/${props.id}`);
+        history.push(`/book/${props.number}`);
     }
 
-    const issueHandler = () => {
-        
+    const issueHandler = async () => {
+        const body = {
+            bookid: props.id,
+            username: userCtx.user.userName
+        }
+        if (userCtx.isLoggedIn) {
+            await fetch("http://localhost:5000/issue", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        })
+            .then((response) => response.json())
+            .then((data) => console.log(data))
+            .catch((error) => console.log(error));
+        } else {
+            history.push("/login");
+        }
     }
 
     return (

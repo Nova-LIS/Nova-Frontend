@@ -1,18 +1,35 @@
 import classes from "./Profile.module.css";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import UserContext from "../../store/user-context";
+import { useParams } from "react-router-dom";
+import BookList from "../../components/booklist/BookList";
 
 const Profile = () => {
     const userCtx = useContext(UserContext);
 
-    console.log(userCtx);
+    const params = useParams();
+
+    const getBooks = async () => {
+        window.scroll(0, 0);
+        await fetch("http://localhost:5000/profile/" + params.username, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            }
+        })
+            .then((response) => response.json())
+            .then((data) => userCtx.onEndBookQuery(data))
+            .catch((error) => console.log(error));
+    };
+
+    useEffect(() => getBooks(), []);
 
     let profileContent;
 
     if (userCtx.inFocus === "Issued Books") {
-        profileContent = <div className={`${classes["content"]} ${classes["issued"]}`}></div>;
+        profileContent = userCtx.books.isLoaded ? <BookList title="Issued Books" books={userCtx.books.issued} /> : <h1>Loading..</h1>;
     } else if (userCtx.inFocus === "Returned Books") {
-        profileContent = <div className={`${classes["content"]} ${classes["returned"]}`}></div>;
+        profileContent = userCtx.books.isLoaded ? <BookList title="Returned Books" books={userCtx.books.returned} /> : <h1>Loading..</h1>;
     } else if (userCtx.inFocus === "Reserved Books") {
         profileContent = <div className={`${classes["content"]} ${classes["reserved"]}`}></div>;
     } else {

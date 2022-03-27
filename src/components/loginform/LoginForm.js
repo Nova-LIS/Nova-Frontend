@@ -58,7 +58,7 @@ const Login = () => {
                     email: data.email,
                     userName: data.userName
                 };
-                userCtx.onLogin(user).then(() => history.push("/profile"));
+                userCtx.onLogin(user);
             } else {
                 setIsPasswordCorrect(false);
             }

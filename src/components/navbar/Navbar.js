@@ -58,7 +58,7 @@ const Navbar = () => {
 
     const logoutBtn = (
         <div className={classes["nav-btn__group"]}>
-            <NavLink to="/profile" className={classes["profile"]}></NavLink>
+            <NavLink to={"/profile/" + (userCtx.user ? userCtx.user.userName : "")} className={classes["profile"]}></NavLink>
             <div className={`${classes["nav-btn"]} ${classes["logout"]}`} onClick={userCtx.onLogout}>
                 Logout
             </div>
