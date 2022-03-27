@@ -56,7 +56,8 @@ const Login = () => {
                     designation: data.designation,
                     phone: data.phone,
                     email: data.email,
-                    userName: data.userName
+                    userName: data.userName,
+                    isAdmin: data.userName === "admin"
                 };
                 userCtx.onLogin(user);
             } else {

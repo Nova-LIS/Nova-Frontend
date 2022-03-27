@@ -4,6 +4,7 @@ import UserContext from "../../store/user-context";
 import { useParams } from "react-router-dom";
 import BookList from "../../components/booklist/BookList";
 
+import { NavLink } from "react-router-dom";
 const Profile = () => {
     const userCtx = useContext(UserContext);
     const params = useParams();
@@ -43,7 +44,11 @@ const Profile = () => {
                 {userCtx.books.isLoaded ? (
                     userCtx.books.issued.length > 0 ? (
                         <BookList
-                            title={userCtx.books.issued.length + " Issued " + (userCtx.books.issued.length === 1 ? "Book" : "Books")}
+                            title={
+                                userCtx.books.issued.length +
+                                " Issued " +
+                                (userCtx.books.issued.length === 1 ? "Book" : "Books")
+                            }
                             books={userCtx.books.issued}
                             lower="1"
                             upper={userCtx.books.issued.length}
@@ -62,7 +67,11 @@ const Profile = () => {
                 {userCtx.books.isLoaded ? (
                     userCtx.books.returned.length > 0 ? (
                         <BookList
-                            title={userCtx.books.returned.length + " Returned " + (userCtx.books.returned.length === 1 ? "Book" : "Books")}
+                            title={
+                                userCtx.books.returned.length +
+                                " Returned " +
+                                (userCtx.books.returned.length === 1 ? "Book" : "Books")
+                            }
                             books={userCtx.books.returned}
                             lower="1"
                             upper={userCtx.books.returned.length}
@@ -77,6 +86,8 @@ const Profile = () => {
         );
     } else if (userCtx.inFocus === "Reserved Books") {
         profileContent = <div className={`${classes["content"]} ${classes["reserved"]}`}></div>;
+    } else if (userCtx.inFocus === "Manage Library") {
+        <NavLink to="/register">Register a Member</NavLink>
     } else {
         profileContent = (
             <div className={`${classes["content"]} ${classes["personal"]}`}>
@@ -119,6 +130,16 @@ const Profile = () => {
                         >
                             Reserved Books
                         </li>
+                        {userCtx.user.isAdmin && (
+                            <li
+                                className={`${classes["choice"]} ${
+                                    userCtx.inFocus === "Manage Library" ? classes["active"] : ""
+                                }`}
+                                onClick={userCtx.onManageFocus}
+                            >
+                                Manage Libray
+                            </li>
+                        )}
                         <li
                             className={`${classes["choice"]} ${
                                 userCtx.inFocus === "Personal Information" ? classes["active"] : ""

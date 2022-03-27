@@ -13,6 +13,7 @@ const UserContext = React.createContext({
     onReturnedFocus: () => {},
     onReservedFocus: () => {},
     onPersonalFocus: () => {},
+    onManageFocus: () => {},
     onBookQuery: () => {},
 });
 
@@ -51,6 +52,10 @@ export const UserContextProvider = (props) => {
     const onPersonalFocus = () => {
         setInFocus("Personal Information");
     };
+
+    const onManageFocus = () => {
+        setInFocus("Manage Libary");
+    }
 
     const onBookQuery = async (section) => {
         setBooks((prevBooks) => {
@@ -115,6 +120,7 @@ export const UserContextProvider = (props) => {
                 onReservedFocus,
                 onReturnedFocus,
                 onPersonalFocus,
+                onManageFocus,
                 onBookQuery,
             }}
         >
