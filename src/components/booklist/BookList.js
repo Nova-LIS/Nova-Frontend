@@ -50,6 +50,7 @@ const BookList = (props) => {
                                 returnedOn={(book.type === "Returned") ? o.format(new Date(new Date(book.returnedOn).toISOString())): ""}
                                 isPrinted={book.isPrinted}
                                 isDeleted={book.isDeleted}
+                                isAvailable={book.isAvailable}
                             />
                         </li>
                     );

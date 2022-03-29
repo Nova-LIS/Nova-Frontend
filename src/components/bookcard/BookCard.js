@@ -4,7 +4,6 @@ import { useHistory } from "react-router-dom";
 import { useContext, useState } from "react";
 import UserContext from "../../store/user-context";
 import ReactDOM from "react-dom";
-import { faFireExtinguisher } from "@fortawesome/free-solid-svg-icons";
 
 const Book = (props) => {
     const userCtx = useContext(UserContext);
@@ -60,8 +59,11 @@ const Book = (props) => {
             message: "Successfully deleted the book.",
             hasSingleBtn: true,
             right: "Ok",
-            onClickRight: () => {closeHandler(); window.location.reload();},
-        })
+            onClickRight: () => {
+                closeHandler();
+                window.location.reload();
+            },
+        });
     };
 
     const deleteHandler = async () => {
@@ -90,7 +92,7 @@ const Book = (props) => {
                 onClickRight: closeHandler,
             };
         });
-    }
+    };
 
     const returnHandler = async () => {
         closeHandler();
@@ -135,43 +137,104 @@ const Book = (props) => {
         });
     };
 
+    const reserveResponseHandler = () => {
+        setPopUpStatus((prevStatus) => {
+            return {
+                isOpen: true,
+                title: "Confirm Reminder",
+                message: "Book has been reserved successfully.",
+                hasSingleBtn: false,
+                right: "Ok",
+                onClickRight: closeHandler,
+            };
+        });
+    };
+
+    const reserveHandler = async () => {
+        closeHandler();
+        const reserveData = {
+            bookid: props.id,
+            username: userCtx.user.userName,
+        };
+        await fetch("http://localhost:5000/reserve", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(reserveData),
+        })
+            .then((response) => response.json())
+            .then((data) => reserveResponseHandler(data))
+            .catch((error) => console.log(error));
+    };
+
     const issueResponseHandler = (data) => {
-        if (data.issuelimit) {
-            setPopUpStatus((prevStatus) => {
-                return {
-                    ...prevStatus,
-                    isOpen: true,
-                    title: "Issue Response",
-                    message: "You have exceeded the maximum amount of books you can issue from Nova LIS.",
-                    hasSingleBtn: true,
-                    right: "Ok",
-                };
-            });
-        }
-        if (data.alreadyissued) {
-            setPopUpStatus((prevStatus) => {
-                return {
-                    ...prevStatus,
-                    isOpen: true,
-                    title: "Issue Response",
-                    message: "You have already issued a copy of this book.",
-                    hasSingleBtn: true,
-                    right: "Ok",
-                };
-            });
-        }
         if (data.isIssued) {
-            setPopUpStatus((prevStatus) => {
-                return {
-                    ...prevStatus,
-                    isOpen: true,
-                    title: "Issue Response",
-                    message: "Successfully issued book from Nova LIS.",
-                    hasSingleBtn: true,
-                    right: "Ok",
-                    onClickRight: () => profileRedirectHandler("Issued Books"),
-                };
-            });
+            if (data.issuelimit) {
+                setPopUpStatus((prevStatus) => {
+                    return {
+                        ...prevStatus,
+                        isOpen: true,
+                        title: "Issue Response",
+                        message: "You have exceeded the maximum amount of books you can issue from Nova LIS.",
+                        hasSingleBtn: true,
+                        right: "Ok",
+                    };
+                });
+            }
+            if (data.alreadyissued) {
+                setPopUpStatus((prevStatus) => {
+                    return {
+                        ...prevStatus,
+                        isOpen: true,
+                        title: "Issue Response",
+                        message: "You have already issued a copy of this book.",
+                        hasSingleBtn: true,
+                        right: "Ok",
+                    };
+                });
+            }
+            if (data.isIssued) {
+                setPopUpStatus((prevStatus) => {
+                    return {
+                        ...prevStatus,
+                        isOpen: true,
+                        title: "Issue Response",
+                        message: "Successfully issued book from Nova LIS.",
+                        hasSingleBtn: true,
+                        right: "Ok",
+                        onClickRight: () => profileRedirectHandler("Issued Books"),
+                    };
+                });
+            }
+        } else {
+            if (data.canReserve) {
+                setPopUpStatus((prevStatus) => {
+                    return {
+                        ...prevStatus,
+                        isOpen: true,
+                        title: "Issue Response",
+                        message: "No copies available right now. Do you want to reserve the book?",
+                        hasSingleBtn: false,
+                        left: "Yes",
+                        right: "Ok",
+                        onClickLeft: reserveHandler,
+                        onClickRight: closeHandler,
+                    };
+                });
+            } else {
+                setPopUpStatus((prevStatus) => {
+                    return {
+                        ...prevStatus,
+                        isOpen: true,
+                        title: "Issue Response",
+                        message: "No copies available right now. Book is already reserved.",
+                        hasSingleBtn: true,
+                        right: "Ok",
+                        onClickRight: () => closeHandler(),
+                    };
+                });
+            }
         }
     };
 
@@ -295,7 +358,7 @@ const Book = (props) => {
                 Return
             </button>
         );
-    } else if (props.type === "Returned") {
+    } else if (props.type === "Display" || props.type === "Returned") {
         transaction = (
             <button className={classes["shadow-btn"]} onClick={confirmIssueHandler}>
                 {props.type === "Display" ? "Issue" : "Issue Again"}
@@ -307,6 +370,12 @@ const Book = (props) => {
                 Send Reminder
             </button>
         );
+    } else if (props.type === "Reserved") {
+        transaction = (
+            <button className={classes["shadow-btn"]} onClick={confirmIssueHandler}>
+                Claim
+            </button>
+        );
     } else {
         transaction = (
             <button className={classes["shadow-btn"]} onClick={confirmDeleteHandler}>
@@ -316,7 +385,11 @@ const Book = (props) => {
     }
 
     // const shouldPrintTransaction = ((!userCtx.user.isAdmin || (userCtx.user.isAdmin && props.type === "Reminder"));
-    const shouldPrintTransaction = ((!userCtx.isLoggedIn) || (userCtx.isLoggedIn && !userCtx.user.isAdmin) || (userCtx.isLoggedIn && userCtx.user.isAdmin && (props.type === "Reminder" || props.type === "Expired")));
+    const shouldPrintTransaction =
+        !userCtx.isLoggedIn ||
+        (userCtx.isLoggedIn && !userCtx.user.isAdmin) ||
+        (userCtx.isLoggedIn && userCtx.user.isAdmin && (props.type === "Reminder" || props.type === "Expired")) ||
+        (props.type === "Reserved" && props.isAvailable);
 
     return (
         <>
@@ -339,8 +412,7 @@ const Book = (props) => {
                     <img src={props.cover} alt={props.bookName} className={classes["cover"]} />
                     <div className={classes["shadow"]}>
                         <div className={classes["shadow-btn__group"]}>
-                            {shouldPrintTransaction &&
-                                transaction}
+                            {shouldPrintTransaction && transaction}
                             <button className={classes["shadow-btn"]} onClick={detailsNavHandler}>
                                 Details
                             </button>

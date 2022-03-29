@@ -22,7 +22,7 @@ export const UserContextProvider = (props) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [user, setUser] = useState(null);
     const [inFocus, setInFocus] = useState("Issued Books");
-    const [books, setBooks] = useState({ isLoaded: false, issued: [], returned: [] });
+    const [books, setBooks] = useState({ isLoaded: false, issued: [], returned: [], reserved: [] });
 
     const onLogin = (data) => {
         setIsLoggedIn(true);
@@ -45,6 +45,7 @@ export const UserContextProvider = (props) => {
     };
 
     const onReservedFocus = () => {
+        console.log("Reserved Focus");
         setInFocus("Reserved Books");
     };
 
@@ -54,7 +55,7 @@ export const UserContextProvider = (props) => {
 
     const onManageFocus = () => {
         setInFocus("Manage Library");
-    }
+    };
 
     const onBookQuery = async (section) => {
         setBooks((prevBooks) => {
@@ -72,8 +73,8 @@ export const UserContextProvider = (props) => {
             .then((data) => {
                 const issuedBooks = [];
                 const returnedBooks = [];
-                for (let sa of data) {
-                    console.log(sa);
+                const reservedBooks = [];
+                for (let sa of data.booksissued) {
                     if (!sa.returned) {
                         issuedBooks.unshift({
                             tId: sa.id,
@@ -85,7 +86,7 @@ export const UserContextProvider = (props) => {
                             type: "Issued",
                             issuedOn: sa.issuedate,
                             expectedReturn: sa.expectedreturn,
-                            isPrinted: sa.isPrinted
+                            isPrinted: sa.isPrinted,
                         });
                     } else {
                         returnedBooks.unshift({
@@ -97,11 +98,26 @@ export const UserContextProvider = (props) => {
                             type: "Returned",
                             issuedOn: sa.issuedate,
                             returnedOn: sa.returndate,
-                            isDeleted: sa.isDeleted
+                            isDeleted: sa.isDeleted,
                         });
                     }
                 }
-                setBooks({ isLoaded: true, issued: issuedBooks, returned: returnedBooks });
+                for (let sa of data.booksreserved) {
+                    reservedBooks.unshift({
+                        bookId: sa.bookid,
+                        bookNumber: sa.booknumber,
+                        bookName: sa.title,
+                        author: sa.author,
+                        cover: sa.image_url,
+                        type: "Reserved",
+                        issuedOn: sa.issuedate,
+                        returnedOn: sa.returndate,
+                        isDeleted: sa.isDeleted,
+                        isAvailable: sa.isAvailable
+                    });
+                }
+                console.log(reservedBooks);
+                setBooks({ isLoaded: true, issued: issuedBooks, returned: returnedBooks, reserved: reservedBooks });
                 setInFocus(section);
                 history.push("/profile/" + user.userName);
             })

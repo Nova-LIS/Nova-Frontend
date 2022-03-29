@@ -215,7 +215,7 @@ const RegisterForm = () => {
     if (!isRegistering) {
         return (
             <form className={`${classes["form"]}`} autoComplete="off" onSubmit={submitHandler}>
-                <h1 className={classes["form__title"]}>{userCtx.user.isAdmin ? "Register a Member" : "Register"}</h1>
+                <h1 className={classes["form__title"]}>{(userCtx.isLoaded && userCtx.user.isAdmin) ? "Register a Member" : "Register"}</h1>
                 <div className={`${classes["form__inputs"]}`}>
                     <div className={classes["input"]}>
                         <label className={`${classes["input__label"]}`} htmlFor="name">

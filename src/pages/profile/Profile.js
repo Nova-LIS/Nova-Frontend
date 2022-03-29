@@ -82,8 +82,6 @@ const Profile = () => {
                 )}
             </div>
         );
-    } else if (userCtx.inFocus === "Reserved Books") {
-        profileContent = <div className={`${classes["content"]} ${classes["reserved"]}`}></div>;
     } else if (userCtx.inFocus === "Manage Library") {
         console.log("Hi");
         profileContent = (
@@ -103,6 +101,28 @@ const Profile = () => {
                 <NavLink to="/expired" key={4}>
                     Remove Obscure Books
                 </NavLink>
+            </div>
+        );
+    } else if (userCtx.inFocus === "Reserved Books") {
+        profileContent = (
+            <div className={`${classes["content"]} ${classes["returned"]}`}>
+                {userCtx.books.isLoaded ? (
+                    userCtx.books.reserved.length > 0 ? (
+                        <BookList
+                            title={
+                                userCtx.books.reserved.length +
+                                " Reserved " +
+                                (userCtx.books.reserved.length === 1 ? "Book" : "Books")
+                            }
+                            books={userCtx.books.reserved}
+                            navigation="Locked"
+                        />
+                    ) : (
+                        <h1>No reserved books.</h1>
+                    )
+                ) : (
+                    <h1>Loading..</h1>
+                )}
             </div>
         );
     } else {
