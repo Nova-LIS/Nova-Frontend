@@ -45,6 +45,11 @@
     background-color: aquamarine;
 }
 
+.member-register {
+    font-size: 5rem;
+    color: var(--color-black);
+}
+
 .content {
     padding: 15rem 0 20rem;
     width: 100%;

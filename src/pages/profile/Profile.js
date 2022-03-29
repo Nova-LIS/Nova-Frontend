@@ -34,7 +34,7 @@ const Profile = () => {
     //         .catch((error) => console.log(error));
     // };
 
-    useEffect(() => userCtx.onBookQuery("Issued Books"), []);
+    useEffect(() => userCtx.onBookQuery(userCtx.user.isAdmin ? "Manage Library" : "Issued Books"), []);
 
     let profileContent;
 
@@ -50,8 +50,7 @@ const Profile = () => {
                                 (userCtx.books.issued.length === 1 ? "Book" : "Books")
                             }
                             books={userCtx.books.issued}
-                            lower="1"
-                            upper={userCtx.books.issued.length}
+                            navigation="Locked"
                         />
                     ) : (
                         <h1>No issued books.</h1>
@@ -73,8 +72,7 @@ const Profile = () => {
                                 (userCtx.books.returned.length === 1 ? "Book" : "Books")
                             }
                             books={userCtx.books.returned}
-                            lower="1"
-                            upper={userCtx.books.returned.length}
+                            navigation="Locked"
                         />
                     ) : (
                         <h1>No returned books.</h1>
@@ -87,7 +85,26 @@ const Profile = () => {
     } else if (userCtx.inFocus === "Reserved Books") {
         profileContent = <div className={`${classes["content"]} ${classes["reserved"]}`}></div>;
     } else if (userCtx.inFocus === "Manage Library") {
-        <NavLink to="/register">Register a Member</NavLink>
+        console.log("Hi");
+        profileContent = (
+            <div className={`${classes["content"]} ${classes["reserved"]}`}>
+                <NavLink to="/register" key={0}>
+                    Register a Member
+                </NavLink>
+                <NavLink to="/users" key={1}>
+                    Delete a Member
+                </NavLink>
+                <NavLink to="/addbook" key={2}>
+                    Add a Book
+                </NavLink>
+                <NavLink to="/reminder" key={3}>
+                    Send Reminder
+                </NavLink>
+                <NavLink to="/expired" key={4}>
+                    Remove Obscure Books
+                </NavLink>
+            </div>
+        );
     } else {
         profileContent = (
             <div className={`${classes["content"]} ${classes["personal"]}`}>
@@ -106,30 +123,34 @@ const Profile = () => {
             <div className={classes["profile"]}>
                 <div className={classes["navigation"]}>
                     <ul>
-                        <li
-                            className={`${classes["choice"]} ${
-                                userCtx.inFocus === "Issued Books" ? classes["active"] : ""
-                            }`}
-                            onClick={userCtx.onIssuedFocus}
-                        >
-                            Issued Books
-                        </li>
-                        <li
-                            className={`${classes["choice"]} ${
-                                userCtx.inFocus === "Returned Books" ? classes["active"] : ""
-                            }`}
-                            onClick={userCtx.onReturnedFocus}
-                        >
-                            Returned Books
-                        </li>
-                        <li
-                            className={`${classes["choice"]} ${
-                                userCtx.inFocus === "Reserved Books" ? classes["active"] : ""
-                            }`}
-                            onClick={userCtx.onReservedFocus}
-                        >
-                            Reserved Books
-                        </li>
+                        {!userCtx.user.isAdmin && (
+                            <>
+                                <li
+                                    className={`${classes["choice"]} ${
+                                        userCtx.inFocus === "Issued Books" ? classes["active"] : ""
+                                    }`}
+                                    onClick={userCtx.onIssuedFocus}
+                                >
+                                    Issued Books
+                                </li>
+                                <li
+                                    className={`${classes["choice"]} ${
+                                        userCtx.inFocus === "Returned Books" ? classes["active"] : ""
+                                    }`}
+                                    onClick={userCtx.onReturnedFocus}
+                                >
+                                    Returned Books
+                                </li>
+                                <li
+                                    className={`${classes["choice"]} ${
+                                        userCtx.inFocus === "Reserved Books" ? classes["active"] : ""
+                                    }`}
+                                    onClick={userCtx.onReservedFocus}
+                                >
+                                    Reserved Books
+                                </li>
+                            </>
+                        )}
                         {userCtx.user.isAdmin && (
                             <li
                                 className={`${classes["choice"]} ${
@@ -137,7 +158,7 @@ const Profile = () => {
                                 }`}
                                 onClick={userCtx.onManageFocus}
                             >
-                                Manage Libray
+                                Manage Library
                             </li>
                         )}
                         <li

@@ -28,7 +28,7 @@ const BookList = (props) => {
         <div className={classes["booklist"]}>
             <div className={classes["header"]}>
                 <h2 className={classes["booklist__title"]}>{props.title}</h2>
-                {navigation}
+                {props.navigation === "Unlocked" && navigation}
             </div>
             <div className={classes["booklist__rule"]}></div>
             <ul className={classes["booklist__list"]}>
@@ -39,20 +39,23 @@ const BookList = (props) => {
                                 id={book.bookId}
                                 tId={book.tId}
                                 key={book.tId}
+                                userName={book.userName}
                                 number={book.bookNumber}
                                 bookName={book.bookName}
                                 author={book.author}
                                 cover={book.cover}
                                 type={book.type}
-                                issuedOn={(book.type === "Issued" || book.type === "Returned") ? o.format(new Date(new Date(book.issuedOn).toISOString())) : ""}
-                                expectedReturn={(book.type === "Issued") ? o.format(new Date(new Date(book.expectedReturn).toISOString())): ""}
+                                issuedOn={(book.type === "Issued" || book.type === "Returned" || book.type == "Reminder") ? o.format(new Date(new Date(book.issuedOn).toISOString())) : ""}
+                                expectedReturn={(book.type === "Issued" || book.type === "Reminder") ? o.format(new Date(new Date(book.expectedReturn).toISOString())): ""}
                                 returnedOn={(book.type === "Returned") ? o.format(new Date(new Date(book.returnedOn).toISOString())): ""}
+                                isPrinted={book.isPrinted}
+                                isDeleted={book.isDeleted}
                             />
                         </li>
                     );
                 })}
             </ul>
-            <div className={classes["header"]}>{navigation}</div>
+            <div className={classes["header"]}>{props.navigation === "Unlocked" && navigation}</div>
         </div>
     );
 };

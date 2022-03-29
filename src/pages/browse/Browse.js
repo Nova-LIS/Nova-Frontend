@@ -10,6 +10,7 @@ const Browse = () => {
         const thisBooks = [];
         if (data.foundBook) {
             for (let book of data.books) {
+                if (book.isDeleted) continue;
                 thisBooks.push({
                     bookId: book.bookid,
                     bookNumber: book.booknumber,
@@ -55,6 +56,7 @@ const Browse = () => {
                             upper={bookData.index + 50 >= bookData.noOfBooks ? bookData.noOfBooks : bookData.index + 50}
                             onIndexIncrease={indexIncreaseHandler}
                             onIndexDecrease={indexDecreaseHandler}
+                            navigation="Unlocked"
                         />
                     ) : (
                         <h1>No books found</h1>

@@ -10,7 +10,12 @@ import Book from "./components/book/Book";
 import About from "./pages/about/About";
 import Contact from "./pages/contact/Contact";
 import Profile from "./pages/profile/Profile";
+import Users from "./pages/users/Users";
+import AddBook from "./pages/addbook/AddBook";
+import Reminder from "./pages/reminder/Reminder";
+
 import { Route, Switch, Redirect } from "react-router-dom";
+import Expired from "./pages/expired/Expired";
 
 const App = () => {
     return (
@@ -27,9 +32,12 @@ const App = () => {
                 <Route path="/login" component={Login} exact />
                 <Route path="/book/:bookId" component={Book} />
                 <Route path="/register" component={Register} exact />
-                {/* <Route path="/profile/:username/:section" component={Profile} /> */}
                 <Route path="/profile/:username" component={Profile} />
+                <Route path="/users" component={Users} exact />
+                <Route path="/reminder" component={Reminder} exact />
+                <Route path="/expired" component={Expired} exact />
                 <Route path="/registersuccess" component={RegisterSuccess} exact />
+                <Route path="/addbook" component={AddBook} exact />
                 <Route path="*" component={ComingSoon} />
             </Switch>
             <Footer />

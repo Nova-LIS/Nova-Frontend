@@ -1,17 +1,19 @@
 import classes from "./RegisterForm.module.css";
 import useInput from "../../hooks/use-input";
 
-import { useState, useRef } from "react";
+import { useState, useContext } from "react";
 
-import { Route, Switch } from "react-router-dom";
 import { useHistory } from "react-router-dom";
+import UserContext from "../../store/user-context";
 
 const isNotEmpty = (value) => value.trim() !== "";
 
 const isEmail = (value) => value.includes("@");
 
 const RegisterForm = () => {
+
     const history = useHistory();
+    const userCtx = useContext(UserContext);
 
     const {
         value: name,
@@ -213,7 +215,7 @@ const RegisterForm = () => {
     if (!isRegistering) {
         return (
             <form className={`${classes["form"]}`} autoComplete="off" onSubmit={submitHandler}>
-                <h1 className={classes["form__title"]}>Register</h1>
+                <h1 className={classes["form__title"]}>{userCtx.user.isAdmin ? "Register a Member" : "Register"}</h1>
                 <div className={`${classes["form__inputs"]}`}>
                     <div className={classes["input"]}>
                         <label className={`${classes["input__label"]}`} htmlFor="name">

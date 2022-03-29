@@ -16,6 +16,16 @@ const Book = (props) => {
     };
 
     const confirmIssueHandler = () => {
+        if (props.type === "Returned" && props.isDeleted) {
+            setPopUpStatus({
+                isOpen: true,
+                title: "Issue Response",
+                message: "This book is no longer available in the library.",
+                hasSingleBtn: true,
+                right: "Ok",
+                onClickRight: () => closeHandler(),
+            });
+        }
         setPopUpStatus((prevStatus) => {
             return { ...prevStatus, isOpen: true };
         });
@@ -43,13 +53,56 @@ const Book = (props) => {
         }
     };
 
+    const deleteResponseHandler = () => {
+        setPopUpStatus({
+            isOpen: true,
+            title: "Delete Response",
+            message: "Successfully deleted the book.",
+            hasSingleBtn: true,
+            right: "Ok",
+            onClickRight: () => {closeHandler(); window.location.reload();},
+        })
+    };
+
+    const deleteHandler = async () => {
+        closeHandler();
+        await fetch("http://localhost:5000/deleteBook/" + props.id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => deleteResponseHandler(data))
+            .catch((error) => console.log(error));
+    };
+
+    const confirmDeleteHandler = () => {
+        setPopUpStatus((prevStatus) => {
+            return {
+                isOpen: true,
+                title: "Confirm Book Deletion",
+                message: "Are you sure you want to remove this book from the library?",
+                hasSingleBtn: false,
+                left: "Yes",
+                right: "No",
+                onClickLeft: deleteHandler,
+                onClickRight: closeHandler,
+            };
+        });
+    }
+
     const returnHandler = async () => {
+        closeHandler();
         await fetch("http://localhost:5000/return/" + props.tId, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-            }
-        }).then(response => response.json()).then(data => returnResponseHandler(data)).catch(error => console.log(error))
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => returnResponseHandler(data))
+            .catch((error) => console.log(error));
     };
 
     const confirmReturnHandler = () => {
@@ -62,6 +115,21 @@ const Book = (props) => {
                 left: "Yes",
                 right: "No",
                 onClickLeft: returnHandler,
+                onClickRight: closeHandler,
+            };
+        });
+    };
+
+    const confirmReminderHandler = () => {
+        setPopUpStatus((prevStatus) => {
+            return {
+                isOpen: true,
+                title: "Confirm Reminder",
+                message: "Are you sure you want to send a reminder message for this book to be returned?",
+                hasSingleBtn: false,
+                left: "Yes",
+                right: "No",
+                onClickLeft: reminderHandler,
                 onClickRight: closeHandler,
             };
         });
@@ -101,10 +169,45 @@ const Book = (props) => {
                     message: "Successfully issued book from Nova LIS.",
                     hasSingleBtn: true,
                     right: "Ok",
-                    onClickRight: (() => profileRedirectHandler("Issued Books"))
+                    onClickRight: () => profileRedirectHandler("Issued Books"),
                 };
             });
         }
+    };
+
+    const reminderResponseHandler = (data) => {
+        if (data.alreadySent) {
+            setPopUpStatus({
+                isOpen: true,
+                title: "Reminder Response",
+                message: "Already printed the reminder message for ths book.",
+                hasSingleBtn: true,
+                right: "Ok",
+                onClickRight: closeHandler,
+            });
+        } else {
+            setPopUpStatus({
+                isOpen: true,
+                title: "Reminder Response",
+                message: "Successfully sent reminder.",
+                hasSingleBtn: true,
+                right: "Ok",
+                onClickRight: closeHandler,
+            });
+        }
+    };
+
+    const reminderHandler = async () => {
+        closeHandler();
+        await fetch("http://localhost:5000/printReminder/" + props.tId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => reminderResponseHandler(data))
+            .catch((error) => console.log(error));
     };
 
     const issueHandler = async () => {
@@ -162,6 +265,7 @@ const Book = (props) => {
             <>
                 <h3 className={classes["author"]}>Issued On: &nbsp;{props.issuedOn}</h3>
                 <h3 className={classes["author"]}>Deadline: &nbsp;{props.expectedReturn}</h3>
+                {props.isPrinted && <h3 className={classes["author"]}>Chutiya book ferot de.</h3>}
             </>
         );
     }
@@ -173,6 +277,16 @@ const Book = (props) => {
             </>
         );
     }
+    if (props.type === "Reminder") {
+        metaData = (
+            <>
+                <h3 className={classes["author"]}>Issued On: &nbsp;{props.issuedOn}</h3>
+                <h3 className={classes["author"]}>Deadline: &nbsp;{props.expectedReturn}</h3>
+                <h3 className={classes["author"]}>Username: {props.userName}</h3>
+                <input type="checkbox" checked disabled />
+            </>
+        );
+    }
 
     let transaction = <></>;
     if (props.type === "Issued") {
@@ -181,13 +295,28 @@ const Book = (props) => {
                 Return
             </button>
         );
-    } else {
+    } else if (props.type === "Returned") {
         transaction = (
             <button className={classes["shadow-btn"]} onClick={confirmIssueHandler}>
                 {props.type === "Display" ? "Issue" : "Issue Again"}
             </button>
         );
+    } else if (props.type === "Reminder") {
+        transaction = (
+            <button className={classes["shadow-btn"]} onClick={confirmReminderHandler}>
+                Send Reminder
+            </button>
+        );
+    } else {
+        transaction = (
+            <button className={classes["shadow-btn"]} onClick={confirmDeleteHandler}>
+                Remove Book
+            </button>
+        );
     }
+
+    // const shouldPrintTransaction = ((!userCtx.user.isAdmin || (userCtx.user.isAdmin && props.type === "Reminder"));
+    const shouldPrintTransaction = ((!userCtx.isLoggedIn) || (userCtx.isLoggedIn && !userCtx.user.isAdmin) || (userCtx.isLoggedIn && userCtx.user.isAdmin && (props.type === "Reminder" || props.type === "Expired")));
 
     return (
         <>
@@ -210,7 +339,8 @@ const Book = (props) => {
                     <img src={props.cover} alt={props.bookName} className={classes["cover"]} />
                     <div className={classes["shadow"]}>
                         <div className={classes["shadow-btn__group"]}>
-                            {transaction}
+                            {shouldPrintTransaction &&
+                                transaction}
                             <button className={classes["shadow-btn"]} onClick={detailsNavHandler}>
                                 Details
                             </button>

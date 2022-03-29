@@ -27,7 +27,6 @@ export const UserContextProvider = (props) => {
     const onLogin = (data) => {
         setIsLoggedIn(true);
         setUser(data);
-        setInFocus("Issued Books");
         history.push("/profile/" + data.userName);
     };
 
@@ -54,7 +53,7 @@ export const UserContextProvider = (props) => {
     };
 
     const onManageFocus = () => {
-        setInFocus("Manage Libary");
+        setInFocus("Manage Library");
     }
 
     const onBookQuery = async (section) => {
@@ -86,6 +85,7 @@ export const UserContextProvider = (props) => {
                             type: "Issued",
                             issuedOn: sa.issuedate,
                             expectedReturn: sa.expectedreturn,
+                            isPrinted: sa.isPrinted
                         });
                     } else {
                         returnedBooks.unshift({
@@ -97,6 +97,7 @@ export const UserContextProvider = (props) => {
                             type: "Returned",
                             issuedOn: sa.issuedate,
                             returnedOn: sa.returndate,
+                            isDeleted: sa.isDeleted
                         });
                     }
                 }
