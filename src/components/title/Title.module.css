@@ -33,11 +33,11 @@
     font-family: "Lato";
 }
 
-.title-btn, .title-btn:link, .title-btn:active {
+.title-btn {
     text-decoration: none;
     border-radius: .5rem;
     border: 2px solid var(--color-black);
-    padding: .5rem 2rem;
+    padding: .6rem 2.2rem;
     font-size: 2rem;
     cursor: pointer;
     transition: all .2s;

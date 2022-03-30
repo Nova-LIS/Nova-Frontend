@@ -23,7 +23,7 @@
 }
 
 .logo-img {
-    width: 6rem;
+    width: 7rem;
     align-items: center;
 }
 
@@ -46,8 +46,9 @@
     text-decoration: none;
     color: black;
     cursor: pointer;
-    transition: all 0.4s;
-    border-radius: .5rem;
+    transition: all .6s;
+    border-top: 2px solid transparent;
+    border-bottom: 2px solid transparent;
 }
 
 .primary-navigation__link:last-child {
@@ -55,7 +56,9 @@
 }
 
 .primary-navigation__link:hover {
-    background-color: rgba(255, 255, 255, .5);
+    background-image: linear-gradient(to right, rgba(255, 255, 255, .3), rgba(255, 255, 255, .5), rgba(255, 255, 255, .3));
+    border-top: 2px solid black;
+    border-bottom: 2px solid black;
 }
 
 .nav-btn__group {
@@ -94,10 +97,18 @@
 }
 
 .profile {
-    background-color: cyan;
+    background-image: linear-gradient(to right, rgba(255, 255, 255, .3), rgba(255, 255, 255, .5), rgba(255, 255, 255, .3));;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     width: 4rem;
     height: 4rem;
     border-radius: 50rem;
+    border: 3px solid #000;
+}
+
+.profile:hover {
+    background-color: rgba(255, 255, 255, .5);
 }
 
 .register {

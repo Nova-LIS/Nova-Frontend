@@ -22,15 +22,22 @@
 
 .arrow {
     padding: .5rem 2rem;
-    border: 2px solid black;
+    color: #ddd;
+    border: 2px solid #ddd;
     border-radius: .5rem;
     cursor: pointer;
     transition: all .1s;
 }
 
+.index {
+    color: var(--color-white);
+    font-size: 2rem;
+    font-weight: 800;
+}
+
 .arrow:hover {
-    background-color: black;
-    color: #fff;
+    background-color: white;
+    color: black;
 }
 
 .booklist__list {

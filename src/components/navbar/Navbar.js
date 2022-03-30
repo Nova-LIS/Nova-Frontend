@@ -5,7 +5,9 @@ import ScrollContext from "../../store/scroll-context";
 import UserContext from "../../store/user-context";
 import classes from "./Navbar.module.css";
 
-import logo from "./react.png";
+import logo from "./imgs/logo.png";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPassport } from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
     // const scrollCtx = useContext(ScrollContext);
@@ -58,7 +60,10 @@ const Navbar = () => {
 
     const logoutBtn = (
         <div className={classes["nav-btn__group"]}>
-            <NavLink to={"/profile/" + (userCtx.user ? userCtx.user.userName : "")} className={classes["profile"]}></NavLink>
+            <NavLink
+                to={"/profile/" + (userCtx.user ? userCtx.user.userName : "")}
+                className={classes["profile"]}
+            ></NavLink>
             <div className={`${classes["nav-btn"]} ${classes["logout"]}`} onClick={userCtx.onLogout}>
                 Logout
             </div>
@@ -145,7 +150,7 @@ const Navbar = () => {
                     </li>
                     <li>
                         <NavLink to="/about" className={classes["secondary-navigation__link"]}>
-                            About
+                            About Nova LIS
                         </NavLink>
                     </li>
                     <li>
@@ -158,6 +163,35 @@ const Navbar = () => {
                             FAQs
                         </NavLink>
                     </li>
+                    {!userCtx.isLoggedIn && (
+                        <li>
+                            <NavLink to="/login" className={classes["secondary-navigation__link"]}>
+                                Login
+                            </NavLink>
+                        </li>
+                    )}
+                    {!userCtx.isLoggedIn && (
+                        <li>
+                            <NavLink to="/login" className={classes["secondary-navigation__link"]}>
+                                Register
+                            </NavLink>
+                        </li>
+                    )}
+                    {userCtx.isLoggedIn && (
+                        <li>
+                            <NavLink
+                                to={"/profile/" + (userCtx.user ? userCtx.user.userName : "")}
+                                className={classes["secondary-navigation__link"]}
+                            >Profile</NavLink>
+                        </li>
+                    )}
+                    {userCtx.isLoggedIn && (
+                        <li>
+                            <div className={classes["secondary-navigation__link"]} onClick={userCtx.onLogout}>
+                                Logout
+                            </div>
+                        </li>
+                    )}
                 </ul>
             </header>
         </header>

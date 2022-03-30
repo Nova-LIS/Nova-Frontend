@@ -1,13 +1,12 @@
-import classes from "./BookCard.module.css";
 import Popup from "../popup/Popup";
-import { useHistory } from "react-router-dom";
-import { useContext, useState } from "react";
 import UserContext from "../../store/user-context";
+import { useContext, useState } from "react";
+import { useHistory } from "react-router-dom";
 import ReactDOM from "react-dom";
+import classes from "./BookCard.module.css";
 
 const Book = (props) => {
     const userCtx = useContext(UserContext);
-
     const history = useHistory();
 
     const detailsNavHandler = () => {
@@ -22,13 +21,10 @@ const Book = (props) => {
                 message: "This book is no longer available in the library.",
                 hasSingleBtn: true,
                 right: "Ok",
-                onClickRight: () => closeHandler(),
+                onClickRight: () => closeHandler,
             });
-            return;
-        }
-        console.log("Reached Here");
-        setPopUpStatus((prevStatus) => {
-            return {
+        } else {
+            setPopUpStatus({
                 isOpen: true,
                 title: userCtx.isLoggedIn ? "Confirm Book Issue" : "Login to Issue Book",
                 message: userCtx.isLoggedIn
@@ -39,145 +35,27 @@ const Book = (props) => {
                 right: "No",
                 onClickLeft: userCtx.isLoggedIn ? issueHandler : loginRedirectHandler,
                 onClickRight: closeHandler,
-            };
-        });
-    };
-
-    const returnResponseHandler = (data) => {
-        if (data.isOverdue) {
-            setPopUpStatus({
-                isOpen: true,
-                title: "Return Response",
-                message: "Successfully returned book. Pay a penalty of " + data.penalty,
-                hasSingleBtn: true,
-                right: "Pay",
-                onClickRight: () => profileRedirectHandler("Returned Books"),
-            });
-        } else {
-            setPopUpStatus({
-                isOpen: true,
-                title: "Return Response",
-                message: "Successfully returned book. No penalty incurred.",
-                hasSingleBtn: true,
-                right: "Ok",
-                onClickRight: () => profileRedirectHandler("Returned Books"),
             });
         }
     };
 
-    const deleteResponseHandler = () => {
-        setPopUpStatus({
-            isOpen: true,
-            title: "Delete Response",
-            message: "Successfully deleted the book.",
-            hasSingleBtn: true,
-            right: "Ok",
-            onClickRight: () => {
-                closeHandler();
-                window.location.reload();
-            },
-        });
-    };
-
-    const deleteHandler = async () => {
+    const issueHandler = async () => {
         closeHandler();
-        await fetch("http://localhost:5000/deleteBook/" + props.id, {
-            method: "DELETE",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => deleteResponseHandler(data))
-            .catch((error) => console.log(error));
-    };
-
-    const confirmDeleteHandler = () => {
-        setPopUpStatus((prevStatus) => {
-            return {
-                isOpen: true,
-                title: "Confirm Book Deletion",
-                message: "Are you sure you want to remove this book from the library?",
-                hasSingleBtn: false,
-                left: "Yes",
-                right: "No",
-                onClickLeft: deleteHandler,
-                onClickRight: closeHandler,
-            };
-        });
-    };
-
-    const returnHandler = async () => {
-        closeHandler();
-        await fetch("http://localhost:5000/return/" + props.tId, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => returnResponseHandler(data))
-            .catch((error) => console.log(error));
-    };
-
-    const confirmReturnHandler = () => {
-        setPopUpStatus((prevStatus) => {
-            return {
-                isOpen: true,
-                title: "Confirm Book Return",
-                message: "Are you sure you want to return this book?",
-                hasSingleBtn: false,
-                left: "Yes",
-                right: "No",
-                onClickLeft: returnHandler,
-                onClickRight: closeHandler,
-            };
-        });
-    };
-
-    const confirmReminderHandler = () => {
-        setPopUpStatus((prevStatus) => {
-            return {
-                isOpen: true,
-                title: "Confirm Reminder",
-                message: "Are you sure you want to send a reminder message for this book to be returned?",
-                hasSingleBtn: false,
-                left: "Yes",
-                right: "No",
-                onClickLeft: reminderHandler,
-                onClickRight: closeHandler,
-            };
-        });
-    };
-
-    const reserveResponseHandler = () => {
-        setPopUpStatus((prevStatus) => {
-            return {
-                isOpen: true,
-                title: "Confirm Reminder",
-                message: "Book has been reserved successfully.",
-                hasSingleBtn: false,
-                right: "Ok",
-                onClickRight: closeHandler,
-            };
-        });
-    };
-
-    const reserveHandler = async () => {
-        closeHandler();
-        const reserveData = {
+        const body = {
             bookid: props.id,
             username: userCtx.user.userName,
         };
-        await fetch("http://localhost:5000/reserve", {
+        await fetch("http://localhost:5000/issue", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(reserveData),
+            body: JSON.stringify(body),
         })
             .then((response) => response.json())
-            .then((data) => reserveResponseHandler(data))
+            .then((data) => {
+                issueResponseHandler(data);
+            })
             .catch((error) => console.log(error));
     };
 
@@ -223,32 +101,144 @@ const Book = (props) => {
             return;
         }
         if (data.canReserve) {
-            setPopUpStatus((prevStatus) => {
-                return {
-                    ...prevStatus,
-                    isOpen: true,
-                    title: "Issue Response",
-                    message: "No copies available right now. Do you want to reserve the book?",
-                    hasSingleBtn: false,
-                    left: "Yes",
-                    right: "Ok",
-                    onClickLeft: reserveHandler,
-                    onClickRight: closeHandler,
-                };
+            setPopUpStatus({
+                isOpen: true,
+                title: "Issue Response",
+                message: "No copies available right now. Do you want to reserve the book?",
+                hasSingleBtn: false,
+                left: "Yes",
+                right: "Ok",
+                onClickLeft: reserveHandler,
+                onClickRight: closeHandler,
             });
         } else {
-            setPopUpStatus((prevStatus) => {
-                return {
-                    ...prevStatus,
-                    isOpen: true,
-                    title: "Issue Response",
-                    message: "No copies available right now. Book is already reserved.",
-                    hasSingleBtn: true,
-                    right: "Ok",
-                    onClickRight: () => closeHandler(),
-                };
+            setPopUpStatus({
+                isOpen: true,
+                title: "Issue Response",
+                message: "No copies available right now. Book is already reserved.",
+                hasSingleBtn: true,
+                right: "Ok",
+                onClickRight: closeHandler,
             });
         }
+    };
+
+    const confirmReturnHandler = () => {
+        setPopUpStatus({
+            isOpen: true,
+            title: "Confirm Book Return",
+            message: "Are you sure you want to return this book?",
+            hasSingleBtn: false,
+            left: "Yes",
+            right: "No",
+            onClickLeft: returnHandler,
+            onClickRight: closeHandler,
+        });
+    };
+
+    const returnHandler = async () => {
+        closeHandler();
+        await fetch("http://localhost:5000/return/" + props.tId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => returnResponseHandler(data))
+            .catch((error) => console.log(error));
+    };
+
+    const returnResponseHandler = (data) => {
+        if (data.isOverdue) {
+            setPopUpStatus({
+                isOpen: true,
+                title: "Return Response",
+                message: "Successfully returned book. Pay a penalty of " + data.penalty,
+                hasSingleBtn: true,
+                right: "Pay",
+                onClickRight: () => profileRedirectHandler("Returned Books"),
+            });
+        } else {
+            setPopUpStatus({
+                isOpen: true,
+                title: "Return Response",
+                message: "Successfully returned book. No penalty incurred.",
+                hasSingleBtn: true,
+                right: "Ok",
+                onClickRight: () => profileRedirectHandler("Returned Books"),
+            });
+        }
+    };
+
+    const confirmDeleteHandler = () => {
+        setPopUpStatus((prevStatus) => {
+            return {
+                isOpen: true,
+                title: "Confirm Book Deletion",
+                message: "Are you sure you want to remove this book from the library?",
+                hasSingleBtn: false,
+                left: "Yes",
+                right: "No",
+                onClickLeft: deleteHandler,
+                onClickRight: closeHandler,
+            };
+        });
+    };
+
+    const deleteHandler = async () => {
+        closeHandler();
+        await fetch("http://localhost:5000/deleteBook/" + props.id, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => deleteResponseHandler(data))
+            .catch((error) => console.log(error));
+    };
+
+    const deleteResponseHandler = () => {
+        setPopUpStatus({
+            isOpen: true,
+            title: "Delete Response",
+            message: "Successfully deleted the book.",
+            hasSingleBtn: true,
+            right: "Ok",
+            onClickRight: () => {
+                closeHandler();
+                window.location.reload();
+            },
+        });
+    };
+
+    const confirmReminderHandler = () => {
+        setPopUpStatus((prevStatus) => {
+            return {
+                isOpen: true,
+                title: "Confirm Reminder",
+                message: "Are you sure you want to send a reminder message for this book to be returned?",
+                hasSingleBtn: false,
+                left: "Yes",
+                right: "No",
+                onClickLeft: reminderHandler,
+                onClickRight: closeHandler,
+            };
+        });
+    };
+
+    const reminderHandler = async () => {
+        closeHandler();
+        await fetch("http://localhost:5000/printReminder/" + props.tId, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((response) => response.json())
+            .then((data) => reminderResponseHandler(data))
+            .catch((error) => console.log(error));
     };
 
     const reminderResponseHandler = (data) => {
@@ -273,37 +263,33 @@ const Book = (props) => {
         }
     };
 
-    const reminderHandler = async () => {
+    const reserveHandler = async () => {
         closeHandler();
-        await fetch("http://localhost:5000/printReminder/" + props.tId, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            },
-        })
-            .then((response) => response.json())
-            .then((data) => reminderResponseHandler(data))
-            .catch((error) => console.log(error));
-    };
-
-    const issueHandler = async () => {
-        closeHandler();
-        const body = {
+        const reserveData = {
             bookid: props.id,
             username: userCtx.user.userName,
         };
-        await fetch("http://localhost:5000/issue", {
+        await fetch("http://localhost:5000/reserve", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(body),
+            body: JSON.stringify(reserveData),
         })
             .then((response) => response.json())
-            .then((data) => {
-                issueResponseHandler(data);
-            })
+            .then((data) => reserveResponseHandler(data))
             .catch((error) => console.log(error));
+    };
+
+    const reserveResponseHandler = () => {
+        setPopUpStatus({
+            isOpen: true,
+            title: "Confirm Reminder",
+            message: "Book has been reserved successfully.",
+            hasSingleBtn: false,
+            right: "Ok",
+            onClickRight: closeHandler,
+        });
     };
 
     const closeHandler = () => {

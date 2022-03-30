@@ -11,7 +11,7 @@ const BookList = (props) => {
             <div onClick={props.onIndexDecrease} className={classes["arrow"]}>
                 <FontAwesomeIcon icon={faArrowLeft} />
             </div>
-            <p>{`${props.lower} - ${props.upper}`}</p>
+            <p className={classes["index"]}>{`${props.lower} - ${props.upper}`}</p>
             <div onClick={props.onIndexIncrease} className={classes["arrow"]}>
                 <FontAwesomeIcon icon={faArrowRight} />
             </div>
