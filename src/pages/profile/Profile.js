@@ -4,6 +4,10 @@ import UserContext from "../../store/user-context";
 import { useParams } from "react-router-dom";
 import BookList from "../../components/booklist/BookList";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faPhone } from "@fortawesome/free-solid-svg-icons";
+
 import { NavLink } from "react-router-dom";
 const Profile = () => {
     const userCtx = useContext(UserContext);
@@ -40,7 +44,7 @@ const Profile = () => {
 
     if (userCtx.inFocus === "Issued Books") {
         profileContent = (
-            <div className={`${classes["content"]} ${classes["personal"]}`}>
+            <div className={`${classes["issued"]}`}>
                 {userCtx.books.isLoaded ? (
                     userCtx.books.issued.length > 0 ? (
                         <BookList
@@ -53,16 +57,16 @@ const Profile = () => {
                             navigation="Locked"
                         />
                     ) : (
-                        <h1>No issued books.</h1>
+                        <h1 className={classes["margin"]}>No issued books.</h1>
                     )
                 ) : (
-                    <h1>Loading..</h1>
+                    <h1 className={classes["margin"]}>Loading..</h1>
                 )}
             </div>
         );
     } else if (userCtx.inFocus === "Returned Books") {
         profileContent = (
-            <div className={`${classes["content"]} ${classes["returned"]}`}>
+            <div className={`${classes["returned"]}`}>
                 {userCtx.books.isLoaded ? (
                     userCtx.books.returned.length > 0 ? (
                         <BookList
@@ -75,37 +79,39 @@ const Profile = () => {
                             navigation="Locked"
                         />
                     ) : (
-                        <h1>No returned books.</h1>
+                        <h1 className={classes["margin"]}>No returned books.</h1>
                     )
                 ) : (
-                    <h1>Loading..</h1>
+                    <h1 className={classes["margin"]}>Loading..</h1>
                 )}
             </div>
         );
     } else if (userCtx.inFocus === "Manage Library") {
         console.log("Hi");
         profileContent = (
-            <div className={`${classes["content"]} ${classes["reserved"]}`}>
-                <NavLink to="/register" key={0}>
-                    Register a Member
-                </NavLink>
-                <NavLink to="/users" key={1}>
-                    Delete a Member
-                </NavLink>
-                <NavLink to="/addbook" key={2}>
-                    Add a Book
-                </NavLink>
-                <NavLink to="/reminder" key={3}>
-                    Send Reminder
-                </NavLink>
-                <NavLink to="/expired" key={4}>
-                    Remove Obscure Books
-                </NavLink>
+            <div className={`${classes["reserved"]}`}>
+                <div className={classes["reserved-list"]}>
+                    <NavLink to="/register" className={classes["link"]} key={0}>
+                        Register a Member
+                    </NavLink>
+                    <NavLink to="/users" className={classes["link"]} key={1}>
+                        Delete a Member
+                    </NavLink>
+                    <NavLink to="/addbook" className={classes["link"]} key={2}>
+                        Add a Book
+                    </NavLink>
+                    <NavLink to="/reminder" className={classes["link"]} key={3}>
+                        Send Reminder
+                    </NavLink>
+                    <NavLink to="/expired" className={classes["link"]} key={4}>
+                        Remove Obscure Books
+                    </NavLink>
+                </div>
             </div>
         );
     } else if (userCtx.inFocus === "Reserved Books") {
         profileContent = (
-            <div className={`${classes["content"]} ${classes["returned"]}`}>
+            <div className={`${classes["reserved"]}`}>
                 {userCtx.books.isLoaded ? (
                     userCtx.books.reserved.length > 0 ? (
                         <BookList
@@ -118,22 +124,24 @@ const Profile = () => {
                             navigation="Locked"
                         />
                     ) : (
-                        <h1>No reserved books.</h1>
+                        <h1 className={classes["margin"]}>No reserved books.</h1>
                     )
                 ) : (
-                    <h1>Loading..</h1>
+                    <h1 className={classes["margin"]}>Loading..</h1>
                 )}
             </div>
         );
     } else {
         profileContent = (
             <div className={`${classes["content"]} ${classes["personal"]}`}>
-                <p>{userCtx.user.name}</p>
-                <p>{userCtx.user.roll}</p>
-                <p>{userCtx.user.designation}</p>
-                <p>{userCtx.user.phone}</p>
-                <p>{userCtx.user.email}</p>
-                <p>{userCtx.user.userName}</p>
+                <div className={classes["personal-content"]}>
+                    <p className={classes["main"]}>{userCtx.user.name}</p>
+                    <p className={classes["sub"]}>{userCtx.user.roll}</p>
+                    <p className={classes["sub"]}>{userCtx.user.designation}</p>
+                    <p className={classes["sub"]}><FontAwesomeIcon icon={faPhone}></FontAwesomeIcon>&nbsp;&nbsp;{userCtx.user.phone}</p>
+                    <p className={classes["sub"]}><FontAwesomeIcon icon={faEnvelope}></FontAwesomeIcon>&nbsp;&nbsp;{userCtx.user.email}</p>
+                    <p className={classes["sub"]}>{userCtx.user.userName}</p>
+                </div>
             </div>
         );
     }

@@ -69,7 +69,7 @@ const About = () => {
                     <div className={classes["content-block"]}>
                         <p className={classes["text"]}>
                             If a book is not returned before the expected deadline, a penalty is incurred on the user.
-                            This penalty is ₹50 for the first week, $100 for the next week and so on for a single book.
+                            This penalty is ₹50 for the first week, ₹100 for the next week and so on for a single book.
                             If multiple books are not returned, a penalty is incurred on each book and the user has to
                             pay the total penalty.
                         </p>

@@ -16,6 +16,7 @@ import Reminder from "./pages/reminder/Reminder";
 
 import { Route, Switch, Redirect } from "react-router-dom";
 import Expired from "./pages/expired/Expired";
+import Faqs from "./pages/faqs/Faqs";
 
 const App = () => {
     return (
@@ -36,7 +37,8 @@ const App = () => {
                 <Route path="/users" component={Users} exact />
                 <Route path="/reminder" component={Reminder} exact />
                 <Route path="/expired" component={Expired} exact />
-                <Route path="/registersuccess" component={RegisterSuccess} exact />
+                <Route path="/faqs" component={Faqs} exact />
+                <Route path="/registersuccess/:message" component={RegisterSuccess} exact />
                 <Route path="/addbook" component={AddBook} exact />
                 <Route path="*" component={ComingSoon} />
             </Switch>

@@ -107,7 +107,7 @@ const Book = (props) => {
                 message: "No copies available right now. Do you want to reserve the book?",
                 hasSingleBtn: false,
                 left: "Yes",
-                right: "Ok",
+                right: "No",
                 onClickLeft: reserveHandler,
                 onClickRight: closeHandler,
             });
@@ -115,7 +115,8 @@ const Book = (props) => {
             setPopUpStatus({
                 isOpen: true,
                 title: "Issue Response",
-                message: "No copies available right now. Book is already reserved.",
+                message:
+                    "This book currently does not have any copies in the library. You have already reserved this book.",
                 hasSingleBtn: true,
                 right: "Ok",
                 onClickRight: closeHandler,
@@ -154,7 +155,7 @@ const Book = (props) => {
             setPopUpStatus({
                 isOpen: true,
                 title: "Return Response",
-                message: "Successfully returned book. Pay a penalty of " + data.penalty,
+                message: "Successfully returned book. Pay a penalty of ₹ " + data.penalty + ".",
                 hasSingleBtn: true,
                 right: "Pay",
                 onClickRight: () => profileRedirectHandler("Returned Books"),
@@ -246,7 +247,7 @@ const Book = (props) => {
             setPopUpStatus({
                 isOpen: true,
                 title: "Reminder Response",
-                message: "Already printed the reminder message for ths book.",
+                message: "Already printed the reminder message for this book.",
                 hasSingleBtn: true,
                 right: "Ok",
                 onClickRight: closeHandler,
@@ -327,7 +328,11 @@ const Book = (props) => {
             <>
                 <h3 className={classes["author"]}>Issued On: &nbsp;{props.issuedOn}</h3>
                 <h3 className={classes["author"]}>Deadline: &nbsp;{props.expectedReturn}</h3>
-                {props.isPrinted && <h3 className={classes["author"]}>Chutiya book ferot de.</h3>}
+                {props.isPrinted ? (
+                    <h3 className={classes["author"]}>Deadline crossed. Please return the book.</h3>
+                ) : (
+                    <h3 className={classes["author"]}></h3>
+                )}
             </>
         );
     }
@@ -345,7 +350,7 @@ const Book = (props) => {
                 <h3 className={classes["author"]}>Issued On: &nbsp;{props.issuedOn}</h3>
                 <h3 className={classes["author"]}>Deadline: &nbsp;{props.expectedReturn}</h3>
                 <h3 className={classes["author"]}>Username: {props.userName}</h3>
-                <input type="checkbox" checked disabled />
+                {props.isOverdue ? <h3 className={classes["author"]}>Overdue</h3> : <h3 className={classes["author"]}>Not Overdue</h3>}
             </>
         );
     }
@@ -364,10 +369,12 @@ const Book = (props) => {
             </button>
         );
     } else if (props.type === "Reminder") {
-        transaction = (
+        transaction = props.isOverdue ? (
             <button className={classes["shadow-btn"]} onClick={confirmReminderHandler}>
                 Send Reminder
             </button>
+        ) : (
+            <></>
         );
     } else if (props.type === "Reserved") {
         transaction = (

@@ -51,6 +51,7 @@ const BookList = (props) => {
                                 isPrinted={book.isPrinted}
                                 isDeleted={book.isDeleted}
                                 isAvailable={book.isAvailable}
+                                isOverdue={book.isOverdue}
                             />
                         </li>
                     );

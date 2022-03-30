@@ -1,8 +1,12 @@
 import classes from "./Contact.module.css";
 
-import ritwikImg from "./imgs/geralt.png";
-import rounakImg from "./imgs/geralt.png";
-import saptarshiImg from "./imgs/geralt.png";
+import ritwikImg from "./imgs/ritwik.jpg";
+import rounakImg from "./imgs/rounak.jpg";
+import saptarshiImg from "./imgs/saptarshi.jpg";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
+import { faPhone } from "@fortawesome/free-solid-svg-icons";
 
 const Contact = () => {
     return (
@@ -13,9 +17,9 @@ const Contact = () => {
                         <img src={ritwikImg} alt="ritwik" className={classes["img"]}/>
                     </div>
                     <div className={classes["info"]}>
-                        <p>Ritwik Ranjan Mallik</p>
-                        <p>mallikritwik2014@gmail.com</p>
-                        <p>8617290014</p>
+                        <p className={classes["name"]}>Ritwik Ranjan Mallik</p>
+                        <p><FontAwesomeIcon icon={faEnvelope}></FontAwesomeIcon>&nbsp; &nbsp;mallikritwik2014@gmail.com</p>
+                        <p><FontAwesomeIcon icon={faPhone}></FontAwesomeIcon>&nbsp; &nbsp;8617290014</p>
                     </div>
                 </div>
                 <div className={classes["contact-block"]}>
@@ -23,9 +27,9 @@ const Contact = () => {
                         <img src={rounakImg} alt="rounak" className={classes["img"]}/>
                     </div>
                     <div className={classes["info"]}>
-                        <p>Rounak Saha</p>
-                        <p>rounaksaha12@gmail.com</p>
-                        <p>6297272095</p>
+                        <p className={classes["name"]}>Rounak Saha</p>
+                        <p><FontAwesomeIcon icon={faEnvelope}></FontAwesomeIcon> &nbsp; &nbsp; rounaksaha12@gmail.com</p>
+                        <p><FontAwesomeIcon icon={faPhone}></FontAwesomeIcon>&nbsp; &nbsp; 6297272095</p>
                     </div>
                 </div>
                 <div className={classes["contact-block"]}>
@@ -33,9 +37,9 @@ const Contact = () => {
                         <img src={saptarshiImg} alt="saptarshi" className={classes["img"]}/>
                     </div>
                     <div className={classes["info"]}>
-                        <p>Saptarshi De Chowdhury</p>
-                        <p>saptarshi_de_chaudhury@outlook.com</p>
-                        <p>9051045291</p>
+                        <p className={classes["name"]}>Saptarshi De Chaudhury</p>
+                        <p><FontAwesomeIcon icon={faEnvelope}></FontAwesomeIcon>&nbsp; &nbsp;saptarshi_dechaudhury@outlook.com</p>
+                        <p><FontAwesomeIcon icon={faPhone}></FontAwesomeIcon>&nbsp; &nbsp;9051045291</p>
                     </div>
                 </div>
             </div>

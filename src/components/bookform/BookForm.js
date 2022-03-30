@@ -97,7 +97,7 @@ const BookForm = () => {
     const insertBookResponseHandler = (data) => {
         setIsAdding(false);
         if (data.accepted) {
-            history.push("/registersuccess");
+            history.push("/registersuccess/" + "Successfully added book to library.");
         } else {
             setTitleExists(data.titleExists);
             setIsbnExists(data.isbnExists);

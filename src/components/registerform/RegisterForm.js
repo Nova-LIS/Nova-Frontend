@@ -138,7 +138,7 @@ const RegisterForm = () => {
     const registerHandler = (data) => {
         setIsRegistering(false);
         if (data.accepted) {
-            history.push("/registersuccess");
+            history.push("/registersuccess/" + "Successfully registered to the library.");
         } else {
             setRollExists(data.rollExists);
             setEmailExists(data.emailExists);

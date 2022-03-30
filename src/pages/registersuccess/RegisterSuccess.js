@@ -1,10 +1,13 @@
+import { useParams } from "react-router-dom";
 import classes from "./RegisterSuccess.module.css";
 
 const RegisterSuccess = () => {
+
+    const params = useParams();
+
     return (
         <div className={classes["register-success"]}>
-            <h1 className={classes["text"]}>Successfully registered to the Library.</h1>
-            <h2 className={classes["text"]}>You can now login.</h2>
+            <h1 className={classes["text"]}>{params.message}</h1>
         </div>
     );
 }
