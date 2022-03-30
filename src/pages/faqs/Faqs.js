@@ -3,7 +3,7 @@ import classes from "./Faqs.module.css";
 const FAQs = [
     {
         query: "How many books can I borrow?",
-        answer: "UG Student: 2 books for 1 month  PG Student: 4 books for 1 month  Research Scholar: 6 books for 3 months  Faculty: 10 ooks for 6 months" 
+        answer: "UG Student: 2 books for 1 month  PG Student: 4 books for 1 month  Research Scholar: 6 books for 3 months  Faculty: 10 books for 6 months" 
     },
     {
         query: "How do I reserve a book?",
