@@ -24,9 +24,22 @@ const Book = (props) => {
                 right: "Ok",
                 onClickRight: () => closeHandler(),
             });
+            return;
         }
+        console.log("Reached Here");
         setPopUpStatus((prevStatus) => {
-            return { ...prevStatus, isOpen: true };
+            return {
+                isOpen: true,
+                title: userCtx.isLoggedIn ? "Confirm Book Issue" : "Login to Issue Book",
+                message: userCtx.isLoggedIn
+                    ? "Are you sure you want to issue this book?"
+                    : "You are not logged in to Nova LIS. Do you want to login?",
+                hasSingleBtn: false,
+                left: "Yes",
+                right: "No",
+                onClickLeft: userCtx.isLoggedIn ? issueHandler : loginRedirectHandler,
+                onClickRight: closeHandler,
+            };
         });
     };
 
@@ -170,71 +183,71 @@ const Book = (props) => {
 
     const issueResponseHandler = (data) => {
         if (data.isIssued) {
-            if (data.issuelimit) {
-                setPopUpStatus((prevStatus) => {
-                    return {
-                        ...prevStatus,
-                        isOpen: true,
-                        title: "Issue Response",
-                        message: "You have exceeded the maximum amount of books you can issue from Nova LIS.",
-                        hasSingleBtn: true,
-                        right: "Ok",
-                    };
-                });
-            }
-            if (data.alreadyissued) {
-                setPopUpStatus((prevStatus) => {
-                    return {
-                        ...prevStatus,
-                        isOpen: true,
-                        title: "Issue Response",
-                        message: "You have already issued a copy of this book.",
-                        hasSingleBtn: true,
-                        right: "Ok",
-                    };
-                });
-            }
-            if (data.isIssued) {
-                setPopUpStatus((prevStatus) => {
-                    return {
-                        ...prevStatus,
-                        isOpen: true,
-                        title: "Issue Response",
-                        message: "Successfully issued book from Nova LIS.",
-                        hasSingleBtn: true,
-                        right: "Ok",
-                        onClickRight: () => profileRedirectHandler("Issued Books"),
-                    };
-                });
-            }
+            setPopUpStatus((prevStatus) => {
+                return {
+                    ...prevStatus,
+                    isOpen: true,
+                    title: "Issue Response",
+                    message: "Successfully issued book from Nova LIS.",
+                    hasSingleBtn: true,
+                    right: "Ok",
+                    onClickRight: () => profileRedirectHandler("Issued Books"),
+                };
+            });
+            return;
+        }
+        if (data.issuelimit) {
+            setPopUpStatus((prevStatus) => {
+                return {
+                    ...prevStatus,
+                    isOpen: true,
+                    title: "Issue Response",
+                    message: "You have exceeded the maximum amount of books you can issue from Nova LIS.",
+                    hasSingleBtn: true,
+                    right: "Ok",
+                };
+            });
+            return;
+        }
+        if (data.alreadyissued) {
+            setPopUpStatus((prevStatus) => {
+                return {
+                    ...prevStatus,
+                    isOpen: true,
+                    title: "Issue Response",
+                    message: "You have already issued a copy of this book.",
+                    hasSingleBtn: true,
+                    right: "Ok",
+                };
+            });
+            return;
+        }
+        if (data.canReserve) {
+            setPopUpStatus((prevStatus) => {
+                return {
+                    ...prevStatus,
+                    isOpen: true,
+                    title: "Issue Response",
+                    message: "No copies available right now. Do you want to reserve the book?",
+                    hasSingleBtn: false,
+                    left: "Yes",
+                    right: "Ok",
+                    onClickLeft: reserveHandler,
+                    onClickRight: closeHandler,
+                };
+            });
         } else {
-            if (data.canReserve) {
-                setPopUpStatus((prevStatus) => {
-                    return {
-                        ...prevStatus,
-                        isOpen: true,
-                        title: "Issue Response",
-                        message: "No copies available right now. Do you want to reserve the book?",
-                        hasSingleBtn: false,
-                        left: "Yes",
-                        right: "Ok",
-                        onClickLeft: reserveHandler,
-                        onClickRight: closeHandler,
-                    };
-                });
-            } else {
-                setPopUpStatus((prevStatus) => {
-                    return {
-                        ...prevStatus,
-                        isOpen: true,
-                        title: "Issue Response",
-                        message: "No copies available right now. Book is already reserved.",
-                        hasSingleBtn: true,
-                        right: "Ok",
-                        onClickRight: () => closeHandler(),
-                    };
-                });
-            }
+            setPopUpStatus((prevStatus) => {
+                return {
+                    ...prevStatus,
+                    isOpen: true,
+                    title: "Issue Response",
+                    message: "No copies available right now. Book is already reserved.",
+                    hasSingleBtn: true,
+                    right: "Ok",
+                    onClickRight: () => closeHandler(),
+                };
+            });
         }
     };
 
